@@ -41,7 +41,7 @@ Total: $ 140.00
 
 # Tecnología:
 - Backend: PHP: Puedes usar Laravel y un ORM. 
-- Frontend: Vue, Vue router, Vuetify 
+- Frontend: Typescript, Vue3, Vue router, Vuetify 
 - Docker.
 
 
