@@ -11,12 +11,21 @@
       </p>
     </div>
 
-    <div class="justify-self-center">${{ item.price.toFixed(2) }}</div>
+    <div class="item-drawer__amounts">
+      <span class="amounts-semibold">Costo Unit.</span>
+      <p>${{ item.price.toFixed(2) }}</p>
+    </div>
 
-    <div class="justify-self-center">{{ item.quantity }}</div>
+    <div class="item-drawer__amounts">
+      <span class="amounts-semibold">Cantidad</span>
+      <p>
+        {{ item.quantity }}
+      </p>
+    </div>
 
-    <div class="font-semibold justify-self-center">
-      ${{ (item.price * item.quantity).toFixed(2) }}
+    <div class="item-drawer__amounts font-semibold">
+      <span class="amounts-semibold">Total</span>
+      <p>${{ (item.price * item.quantity).toFixed(2) }}</p>
     </div>
   </div>
 </template>
@@ -54,5 +63,17 @@ defineProps<{ item: IProps }>();
   img {
     @apply w-16 h-16 rounded-lg object-contain bg-contain;
   }
+}
+
+.item-drawer__amounts {
+  @apply grid grid-cols-[80px_1fr] w-36 self-end lg:self-auto lg:w-auto lg:block justify-self-center gap-x-4;
+
+  p {
+    @apply text-end;
+  }
+}
+
+.amounts-semibold {
+  @apply font-semibold lg:hidden;
 }
 </style>
