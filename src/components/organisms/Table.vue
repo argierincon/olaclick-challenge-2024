@@ -108,6 +108,12 @@
 
     <OrderDrawer
       :visible="showOrderDrawer"
+      :orderId="order.id"
+      :client="order.client"
+      :status="order.status"
+      :items="order.items"
+      :discount="order.discount"
+      :taxRate="order.taxRate"
       @update:visible="showOrderDrawer = $event"
     />
   </section>
@@ -233,6 +239,42 @@ const showOrderDrawer = ref(false);
 const prueba = (id: number) => {
   console.log(id);
   showOrderDrawer.value = true;
+};
+
+type TStatus = "started" | "delivered" | "finished";
+
+const order = {
+  id: 12345,
+  client: "Eloise",
+  status: "started" as TStatus,
+  items: [
+    {
+      name: "Beef Crowich",
+      desc: "Emit event to notify parent to close the sidebar",
+      price: 5.5,
+      quantity: 1,
+      image:
+        "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+    },
+    {
+      name: "Sliced Black Forest",
+      desc: "Emit event to notify parent to close the sidebar",
+      price: 5.0,
+      quantity: 2,
+      image:
+        "https://www.sugarplumbakery.org/wp-content/uploads/2022/05/A92A6026-2-1200x800.png",
+    },
+    {
+      name: "Solo Floss Bread",
+      desc: "Emit event to notify parent to close the sidebar",
+      price: 4.5,
+      quantity: 1,
+      image:
+        "https://crustabakes.wordpress.com/wp-content/uploads/2010/10/floss-bread-11.jpg",
+    },
+  ],
+  discount: 2,
+  taxRate: 0.1,
 };
 </script>
 
