@@ -8,102 +8,60 @@
         @click="close"
       ></div>
 
-      <!-- Sidebar -->
+      <!-- Drawer -->
       <transition name="slide-in">
-        <div
-          v-if="visible"
-          class="order-details fixed right-0 top-0 h-full w-full md:w-[50%] bg-white shadow-lg flex flex-col z-20"
-        >
-          <!-- Header -->
-          <header class="drawer-header">
-            <div>
-              <h2 class="text-xl font-semibold">Eloise's Order</h2>
-              <p class="text-sm text-gray-500">ID de la Orden: 5</p>
+        <div v-if="visible" class="order-drawer">
+          <header class="order-drawer__header">
+            <div class="header-info">
+              <h4>Eloise's Order</h4>
+              <p>ID de la Orden: 5</p>
             </div>
 
             <Chip label="Entregado" type="success" light />
           </header>
 
-          <!-- Order Details -->
-          <section class="px-6 flex-grow overflow-y-auto">
-            <!-- Header for the items -->
-            <div
-              class="py-3 grid grid-cols-[1fr_80px_80px_80px] items-center gap-x-3 font-semibold bg-[#F7F7F7] rounded-xl"
-            >
+          <section class="order-drawer__items">
+            <div class="items-header">
               <p class="pl-4 rounded-full">Item</p>
-              <p class="rounded-full justify-self-center text-center">
-                Costo Unit.
-              </p>
-              <p class="rounded-full justify-self-center text-center">
-                Cantidad
-              </p>
-              <p class="rounded-full justify-self-center text-center">Total</p>
+              <p class="items-amounts">Costo Unit.</p>
+              <p class="items-amounts">Cantidad</p>
+              <p class="items-amounts">Total</p>
             </div>
 
-            <!-- Order Items -->
-            <div
+            <ItemDrawer
               v-for="(item, index) in items"
               :key="index"
-              class="grid grid-cols-[64px_1fr_80px_80px_80px] gap-x-3 items-center py-8 border-b border-dashed"
-            >
-              <div class="bg-[#F7F7F7] rounded-lg">
-                <img
-                  :src="item.image"
-                  alt=""
-                  class="w-16 h-16 rounded-lg object-contain bg-contain"
-                />
-              </div>
-
-              <div>
-                <p class="font-medium">{{ item.name }}</p>
-                <p class="text-sm text-gray-500">
-                  {{ item.desc }}
-                </p>
-              </div>
-
-              <div class="justify-self-center">
-                ${{ item.price.toFixed(2) }}
-              </div>
-
-              <div class="justify-self-center">{{ item.quantity }}</div>
-
-              <div class="font-semibold justify-self-center">
-                ${{ (item.price * item.quantity).toFixed(2) }}
-              </div>
-            </div>
-
-            <div class="rounded-dashes"></div>
+              :item="item"
+            />
           </section>
 
-          <!-- Order Summary -->
+          <footer class="order-drawer__footer">
+            <div class="footer-waves">
+              <div class="total-grid mb-2">
+                <span class="text-sm">Subtotal</span>
+                <span>$</span>
+                <span class="text-end">
+                  {{ subtotal.toFixed(2) }}
+                </span>
+              </div>
 
-          <footer class="custom-shadow">
-            <div class="pt-8 px-6 pb-6 box">
-              <footer>
-                <div class="flex justify-between mb-2">
-                  <span class="text-sm">Subtotal</span>
-                  <span>${{ subtotal.toFixed(2) }}</span>
-                </div>
-                <div class="flex justify-between mb-2 text-gray-500">
-                  <span class="text-sm">Tax (10%)</span>
-                  <span cl>${{ tax.toFixed(2) }}</span>
-                </div>
-                <div class="rounded-dashes-total"></div>
+              <div class="total-grid mb-2 text-gray-500">
+                <span class="text-sm">Tax (10%)</span>
+                <span>$</span>
+                <span class="text-end">{{ tax.toFixed(2) }}</span>
+              </div>
+              <div class="rounded-dashes-total"></div>
 
-                <!-- <div class="flex justify-between mb-2 text-green-500">
-                <span class="text-sm">Discount</span>
-                <span>-${{ discount.toFixed(2) }}</span>
-              </div> -->
-                <div class="pt-4 flex justify-between font-bold text-lg">
-                  <span>TOTAL</span>
-                  <span>${{ total.toFixed(2) }}</span>
-                </div>
-                <button
-                  class="w-full h-14 mt-8 bg-[#2D71F8] text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                  Place Order
-                </button>
-              </footer>
+              <div class="total-grid mt-4 font-bold text-lg">
+                <span>TOTAL</span>
+                <span>$</span>
+                <span class="text-end">{{ total.toFixed(2) }}</span>
+              </div>
+
+              <button class="order-drawer__btn">
+                <!-- ENVIAR O ENTREGAR -->
+                Entregar Orden
+              </button>
             </div>
           </footer>
         </div>
@@ -115,6 +73,7 @@
 <script setup lang="ts">
 import { ref, computed, defineProps, defineEmits } from "vue";
 import Chip from "../atoms/Chip.vue";
+import ItemDrawer from "../atoms/ItemDrawer.vue";
 
 defineProps({
   visible: {
@@ -177,14 +136,80 @@ const close = () => {
 </script>
 
 <style lang="postcss" scoped>
-.order-details {
-  @apply gap-y-8;
+.order-drawer {
+  @apply h-full w-full flex flex-col gap-y-6 fixed right-0 top-0 z-10 bg-white shadow-lg;
+  @apply md:w-[50%];
   transition: transform 0.3s ease-in-out;
 }
 
-.drawer-header {
+.order-drawer__header {
   @apply p-6 flex justify-between items-center bg-white border-solid;
-  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.header-info {
+  p {
+    @apply text-sm text-gray-500;
+  }
+}
+
+.order-drawer__items {
+  @apply px-6 flex-grow overflow-y-auto;
+}
+
+.items-header {
+  @apply hidden py-3;
+  @apply lg:grid lg:grid-cols-[1fr_80px_80px_80px] lg:items-center lg:gap-x-3 lg:font-semibold lg:bg-[#F7F7F7] lg:rounded-xl;
+}
+
+.items-amounts {
+  @apply rounded-full justify-self-center text-center;
+}
+
+.order-drawer__footer {
+  @apply relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #00000025;
+    filter: blur(20px) opacity(0.5);
+  }
+}
+
+.footer-waves {
+  @apply pt-8 pb-6 px-6 bg-[#f6f6f6];
+  --mask: radial-gradient(12.81px at 50% 18px, #000 99%, #0000 101%)
+      calc(50% - 20px) 0/40px 100%,
+    radial-gradient(12.81px at 50% -8px, #0000 99%, #000 101%) 50% 10px/40px
+      100% repeat-x;
+  -webkit-mask: var(--mask);
+  mask: var(--mask);
+}
+
+.total-grid {
+  @apply grid grid-cols-[1fr_20px_100px];
+}
+
+.rounded-dashes-total {
+  --s: 1px;
+  --c: #dfdfdf;
+  --_g: var(--s) top 50%, var(--c) calc(100% - 1px), #0000;
+
+  height: var(--s);
+  width: 100%;
+
+  background: 0 / calc(20 * var(--s)) space no-repeat;
+  background-image: radial-gradient(circle closest-side at left var(--_g)),
+    radial-gradient(circle closest-side at right var(--_g)),
+    linear-gradient(90deg, #0000 25%, var(--c) 0 75%, #0000 0);
+}
+
+.order-drawer__btn {
+  @apply py-2 w-full h-14 mt-8 bg-[#2D71F8] text-white  rounded-lg hover:bg-blue-700 transition;
 }
 
 /* Transitions */
@@ -209,45 +234,5 @@ const close = () => {
 
 .slide-in-leave-to {
   transform: translateX(100%);
-}
-
-.box {
-  @apply bg-[#f6f6f6];
-  /* @apply bg-white; */
-  --mask: radial-gradient(12.81px at 50% 18px, #000 99%, #0000 101%)
-      calc(50% - 20px) 0/40px 100%,
-    radial-gradient(12.81px at 50% -8px, #0000 99%, #000 101%) 50% 10px/40px
-      100% repeat-x;
-  -webkit-mask: var(--mask);
-  mask: var(--mask);
-}
-
-.custom-shadow {
-  @apply relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: -10px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #00000025;
-    filter: blur(20px) opacity(0.5);
-  }
-}
-
-.rounded-dashes-total {
-  --s: 1px;
-  --c: #dfdfdf;
-  --_g: var(--s) top 50%, var(--c) calc(100% - 1px), #0000;
-
-  height: var(--s);
-  width: 100%;
-
-  background: 0 / calc(20 * var(--s)) space no-repeat;
-  background-image: radial-gradient(circle closest-side at left var(--_g)),
-    radial-gradient(circle closest-side at right var(--_g)),
-    linear-gradient(90deg, #0000 25%, var(--c) 0 75%, #0000 0);
 }
 </style>
