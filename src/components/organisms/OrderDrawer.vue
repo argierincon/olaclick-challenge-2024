@@ -1,23 +1,17 @@
 <template>
   <transition name="fade">
     <section>
-      <!-- Overlay -->
-      <div
-        v-if="visible"
-        class="overlay fixed inset-0 bg-[#c4ced89c] opacity-50 z-10"
-        @click="close"
-      ></div>
+      <div v-if="visible" class="overlay" @click="close"></div>
 
-      <!-- Drawer -->
       <transition name="slide-in">
         <div v-if="visible" class="order-drawer">
           <header class="order-drawer__header">
             <div class="header-info">
-              <h4>Eloise's Order</h4>
-              <p>ID de la Orden: 5</p>
+              <h4>Cliente: {{ client }}</h4>
+              <p>ID de la Orden: {{ orderId }}</p>
             </div>
 
-            <Chip label="Entregado" type="success" light />
+            <Chip :label="statusLabel" :type="statusType" :light="isLight" />
           </header>
 
           <section class="order-drawer__items">
@@ -58,10 +52,7 @@
                 <span class="text-end">{{ total.toFixed(2) }}</span>
               </div>
 
-              <button class="order-drawer__btn">
-                <!-- ENVIAR O ENTREGAR -->
-                Entregar Orden
-              </button>
+              <button class="order-drawer__btn">Entregar Orden</button>
             </div>
           </footer>
         </div>
@@ -71,20 +62,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits } from "vue";
+import { ref, computed, defineProps, defineEmits, toRefs } from "vue";
 import Chip from "../atoms/Chip.vue";
 import ItemDrawer from "../atoms/ItemDrawer.vue";
 
-defineProps({
-  visible: {
-    type: Boolean,
-    required: true,
-  },
-});
+type TStatus = "started" | "delivered" | "finished";
 
-const emit = defineEmits(["update:visible"]);
-
-interface OrderItem {
+interface IOrderItem {
   name: string;
   price: number;
   desc: string;
@@ -92,43 +76,58 @@ interface OrderItem {
   image: string;
 }
 
-const items = ref<OrderItem[]>([
-  {
-    name: "Beef Crowich",
-    desc: "Emit event to notify parent to close the sidebar",
-    price: 5.5,
-    quantity: 1,
-    image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
-  },
-  {
-    name: "Sliced Black Forest",
-    desc: "Emit event to notify parent to close the sidebar",
-    price: 5.0,
-    quantity: 2,
-    image:
-      "https://www.sugarplumbakery.org/wp-content/uploads/2022/05/A92A6026-2-1200x800.png",
-  },
-  {
-    name: "Solo Floss Bread",
-    desc: "Emit event to notify parent to close the sidebar",
-    price: 4.5,
-    quantity: 1,
-    image:
-      "https://crustabakes.wordpress.com/wp-content/uploads/2010/10/floss-bread-11.jpg",
-  },
-]);
+interface IProps {
+  visible: boolean;
+  orderId: string | number;
+  client: string;
+  status: TStatus;
+  items: IOrderItem[];
+  discount?: number;
+  taxRate?: number;
+}
 
-const discount = ref(1.0);
-const taxRate = 0.1;
+const props = defineProps<IProps>();
+
+const { status, items, taxRate, discount } = toRefs(props);
+
+const emit = defineEmits(["update:visible"]);
+
+const statusLabel = computed(() => {
+  const statusMap: Record<TStatus, string> = {
+    started: "Iniciado",
+    delivered: "Enviado",
+    finished: "Entregado",
+  };
+
+  return statusMap[props.status] || "";
+});
+
+const statusType = computed(() => {
+  switch (status.value) {
+    case "started":
+      return "info";
+    case "delivered":
+      return "success";
+    case "finished":
+      return "success";
+    default:
+      return "info";
+  }
+});
+
+const isLight = computed(() => {
+  return status.value === "started" || status.value === "delivered";
+});
 
 const subtotal = computed(() =>
   items.value.reduce((acc, item) => acc + item.price * item.quantity, 0)
 );
 
-const tax = computed(() => subtotal.value * taxRate);
+const tax = computed(() => subtotal.value * (taxRate.value ?? 0.1));
 
-const total = computed(() => subtotal.value + tax.value - discount.value);
+const total = computed(
+  () => subtotal.value + tax.value - (discount.value ?? 0)
+);
 
 const close = () => {
   emit("update:visible", false);
@@ -136,6 +135,10 @@ const close = () => {
 </script>
 
 <style lang="postcss" scoped>
+.overlay {
+  @apply fixed inset-0 bg-[#c4ced89c] opacity-50 z-10;
+}
+
 .order-drawer {
   @apply h-full w-full flex flex-col gap-y-6 fixed right-0 top-0 z-10 bg-white shadow-lg;
   @apply md:w-[50%];
@@ -209,7 +212,7 @@ const close = () => {
 }
 
 .order-drawer__btn {
-  @apply py-2 w-full h-14 mt-8 bg-[#2D71F8] text-white  rounded-lg hover:bg-blue-700 transition;
+  @apply py-2 w-full h-14 mt-8 bg-[#2D71F8] text-white rounded-lg hover:bg-blue-700 transition;
 }
 
 /* Transitions */
