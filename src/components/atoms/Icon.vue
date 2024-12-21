@@ -5,8 +5,10 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
 import ArrowLeft from "../icons/ArrowLeft.vue";
+import Calendar from "../icons/Calendar.vue";
 import ChevronLeft from "../icons/ChevronLeft.vue";
 import ChevronRight from "../icons/ChevronRight.vue";
+import Clock from "../icons/Clock.vue";
 import Edit from "../icons/Edit.vue";
 import Eye from "../icons/Eye.vue";
 import MenuBurger from "../icons/MenuBurger.vue";
@@ -14,8 +16,10 @@ import Trash from "../icons/Trash.vue";
 
 const icons = {
   ArrowLeft,
+  Calendar,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Edit,
   Eye,
   MenuBurger,
