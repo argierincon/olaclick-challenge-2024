@@ -23,8 +23,8 @@
               v-for="(value, name) in dataTable"
               :key="name"
               :data-label="getTranslatedLabel(name)"
-              :class="{ 'hidden-id': name === 'id' }"
             >
+              <!-- :class="{ 'hidden-id': name === 'id' }" -->
               <div class="data-cell">
                 <p v-if="name !== 'status'">{{ value }}</p>
 
@@ -32,18 +32,12 @@
                   <Chip
                     v-if="dataTable.status === 'Iniciado'"
                     label="Iniciado"
-                    type="warning"
+                    type="info"
                     light
                   />
                   <Chip
                     v-if="dataTable.status === 'Enviado'"
                     label="Enviado"
-                    type="info"
-                    light
-                  />
-                  <Chip
-                    v-if="dataTable.status === 'Entregado'"
-                    label="Entregado"
                     type="success"
                     light
                   />
@@ -109,6 +103,13 @@
         />
       </div>
     </div>
+
+    <!-- <OrderDrawer v-if="showOrderDrawer" :orderId="selectedOrderId" /> -->
+
+    <OrderDrawer
+      :visible="showOrderDrawer"
+      @update:visible="showOrderDrawer = $event"
+    />
   </section>
 </template>
 
@@ -120,6 +121,7 @@ import { useGlobalStore } from "../../store";
 import BtnTableActions from "../atoms/BtnTableActions.vue";
 import Chip from "../atoms/Chip.vue";
 import Select from "../atoms/Select.vue";
+import OrderDrawer from "./OrderDrawer.vue";
 
 // Tipos
 interface ITotals {
@@ -148,19 +150,17 @@ const props = defineProps({
 const { tableData } = toRefs(props);
 
 const nameMapping = {
-  order: "Orden",
+  id: "ID",
   time: "Hora",
   detail: "Detalle",
   client: "Cliente",
   total: "Total",
   status: "Estado",
-  id: "ID",
 } as const;
 
 const cleanData = computed(
   (): {
     id: number;
-    order: number;
     time: string;
     detail: string;
     client: string;
@@ -169,7 +169,6 @@ const cleanData = computed(
   }[] => {
     return tableData.value.map((e) => ({
       id: e.id,
-      order: e.order,
       time: e.time,
       detail: e.detail,
       client: e.client,
@@ -185,7 +184,7 @@ const getTranslatedLabel = (name: keyof typeof nameMapping): string => {
 
 // Constantes
 const tableHeaders = [
-  "Nº",
+  "ID",
   "Hora",
   "Detalle",
   "Cliente",
@@ -229,8 +228,11 @@ const selectLimit = (limit: number): void => {
   globalState.setLimit(limit);
 };
 
+const showOrderDrawer = ref(false);
+
 const prueba = (id: number) => {
-  console.log("PRUEBAAAAA", id);
+  console.log(id);
+  showOrderDrawer.value = true;
 };
 </script>
 
