@@ -24,7 +24,6 @@
               :key="name"
               :data-label="getTranslatedLabel(name)"
             >
-              <!-- :class="{ 'hidden-id': name === 'id' }" -->
               <div class="data-cell">
                 <p v-if="name !== 'status'">{{ value }}</p>
 
