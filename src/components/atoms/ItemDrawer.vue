@@ -35,7 +35,17 @@ defineProps<{ item: IProps }>();
 
 <style lang="postcss" scoped>
 .item-drawer {
-  @apply grid grid-cols-[64px_1fr_80px_80px_80px] gap-x-3 items-center py-8 border-b border-dashed;
+  @apply pb-8;
+  @apply flex flex-col items-start gap-3;
+  @apply lg:pt-8 lg:grid lg:grid-cols-[64px_1fr_80px_80px_80px] lg:items-center;
+}
+
+.item-drawer:not(:nth-child(2)) {
+  @apply pt-8;
+}
+
+.item-drawer:not(:last-child) {
+  @apply border-b border-dashed;
 }
 
 .item-drawer__img {
@@ -44,8 +54,5 @@ defineProps<{ item: IProps }>();
   img {
     @apply w-16 h-16 rounded-lg object-contain bg-contain;
   }
-}
-
-.item-drawer__description {
 }
 </style>
