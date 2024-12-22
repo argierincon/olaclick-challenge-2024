@@ -1,28 +1,52 @@
-import { order } from "../services/apiService";
 import {
   collection,
   addDoc,
   query,
-  getDocs,
   orderBy,
   limit,
   startAfter,
   doc,
   getDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import { db } from "../services/firebase";
 
 import type { IOrder } from "./interfaces/IOrders";
 import type { IState } from "./state";
+import { generateRandomOrders } from "../services/menu";
 
 export const actions = {
-  async addOrderToCollection(this: IState) {
+  async addOrderToCollection() {
     try {
-      console.log(order);
+      let count = 0;
 
-      const ordersCollection = collection(db, "orders");
-      const docRef = await addDoc(ordersCollection, order);
-      console.log("Order added to Firestore with ID:", docRef.id);
+      // Se llama hasta 5 veces en intervalos aleatorios entre 30 segundos y un minuto
+      const generateNextOrder = async () => {
+        if (count < 5) {
+          const orders = generateRandomOrders();
+          // console.log(`Orden ${count + 1}:`, orders);
+          count++;
+
+          // crear ordenes en firebase
+          const ordersCollection = collection(db, "orders");
+          const docRefs = orders.map((order) =>
+            addDoc(ordersCollection, order)
+          );
+          await Promise.all(docRefs);
+
+          // Generar un intervalo aleatorio entre 30 y 60 segundos (30000 a 60000 ms)
+          const interval =
+            Math.floor(Math.random() * (60000 - 30000 + 1)) + 30000;
+
+          // Llamar a generateNextOrder después del intervalo aleatorio
+          setTimeout(generateNextOrder, interval);
+        } else {
+          console.log("Generación de órdenes completa.");
+        }
+      };
+
+      // Iniciar la llamada inicial
+      await generateNextOrder();
     } catch (error) {
       console.log(error);
 
@@ -43,19 +67,19 @@ export const actions = {
         )
       );
 
-      const querySnapshot = await getDocs(q);
+      // onSnapshot para escuchar los cambios en tiempo real
+      onSnapshot(q, (querySnapshot) => {
+        const orders: IOrder[] = querySnapshot.docs.map((doc) => ({
+          ...(doc.data() as IOrder),
+          uid: doc.id,
+        }));
 
-      const orders: IOrder[] = querySnapshot.docs.map((doc) => ({
-        ...(doc.data() as IOrder),
-        uid: doc.id,
-      }));
-
-      this.ordersData = { data: orders, total: orders.length };
+        this.ordersData = { data: orders, total: orders.length };
+      });
     } catch (error) {
       throw new Error("Failed to fetch orders");
     }
   },
-
   async getOrderDetail(this: IState, orderId: string) {
     try {
       const orderDocRef = doc(db, "orders", orderId);
