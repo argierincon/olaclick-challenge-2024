@@ -4,26 +4,32 @@ import {
   type RouteRecordRaw,
 } from "vue-router";
 
-import Orders from "../views/Orders.vue";
-import Home from "../views/Home..vue";
 import AppLayout from "../layouts/AppLayout.vue";
+import Orders from "../views/Orders.vue";
 
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
+    redirect: "/orders",
+  },
+  {
+    path: "/orders",
     component: AppLayout,
     children: [
       {
         path: "",
-        name: "home",
-        component: Home,
-      },
-      {
-        path: "/orders",
         name: "Orders",
         component: Orders,
       },
+      // {
+      //   path: "id-:id",
+      //   name: "OrderDetail",
+      // },
     ],
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    redirect: "/orders",
   },
 ];
 
