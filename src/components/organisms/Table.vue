@@ -18,7 +18,7 @@
         </thead>
 
         <tbody>
-          <tr v-if="!cleanData">
+          <tr v-if="cleanData.length === 0">
             <td colspan="100%" class="text-center">
               <div class="td-empty">No hay registros</div>
             </td>
@@ -32,7 +32,10 @@
               :class="{ 'hidden-id': name === 'uid' }"
             >
               <div class="data-cell">
-                <p v-if="name !== 'status'">{{ value }}</p>
+                <p v-if="name !== 'status'">
+                  <span v-if="name === 'total'">$</span>
+                  {{ value }}
+                </p>
 
                 <div v-if="name === 'status'">
                   <Chip
@@ -136,7 +139,7 @@ import {
 import { useRoute, useRouter } from "vue-router";
 import { getPaginationRange } from "../../utils/paginationDots";
 import { useGlobalStore } from "../../store";
-import { IOrder } from "../../store/interfaces/IOrders";
+import type { IOrder } from "../../store/interfaces/IOrders";
 
 import BtnTableActions from "../atoms/BtnTableActions.vue";
 import Chip from "../atoms/Chip.vue";
@@ -184,33 +187,24 @@ const nameMapping = {
   status: "Estado",
 } as const;
 
-const cleanData = computed(
-  (): {
-    uid: string;
-    id: number;
-    time: string;
-    detail: string;
-    client: string;
-    total: string;
-    status: string;
-  }[] => {
-    return tableData.value?.map((e) => ({
-      uid: e.uid,
-      id: e.id,
-      time: e.time,
-      detail: e.detail,
-      client: e.client,
-      total: e.total,
-      status: e.status,
-    }));
-  }
-);
+const cleanData = computed(() => {
+  const data = Array.isArray(tableData.value) ? tableData.value : [];
+
+  return data.map((e) => ({
+    uid: e.uid,
+    id: e.id,
+    time: e.time,
+    detail: e.detail,
+    client: e.client,
+    total: e.total,
+    status: e.status,
+  }));
+});
 
 const getTranslatedLabel = (name: keyof typeof nameMapping): string => {
   return nameMapping[name] || name;
 };
 
-// Constantes
 const tableHeaders = [
   "Nº",
   "Hora",
@@ -221,7 +215,6 @@ const tableHeaders = [
   "Acciones",
 ];
 
-// Global State
 const optPagination = [
   { label: "Mostrar 10", value: 10 },
   { label: "Mostrar 20", value: 20 },
