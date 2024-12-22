@@ -8,11 +8,10 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import { useGlobalStore } from "../store";
-import type { TStatus } from "../interfaces/Orders";
+import { storeToRefs } from "pinia";
 
 import OrderCardsSection from "../components/molecules/OrderCardsSection.vue";
 import Table from "../components/organisms/Table.vue";
-import { storeToRefs } from "pinia";
 
 const globalStore = useGlobalStore();
 
