@@ -18,11 +18,12 @@ const globalStore = useGlobalStore();
 const data = ref();
 const isLoading = ref<boolean>(false);
 
-const getOrdersData = async () => {
+const getOrdersData = () => {
   try {
     isLoading.value = true;
-    await globalStore.getOrders();
-    data.value = globalStore.ordersList;
+    globalStore.getOrders();
+
+    data.value = globalStore.ordersData?.data || [];
   } catch (error) {
     console.error(error);
   } finally {
@@ -41,4 +42,12 @@ watch(tablePage, () => {
 onMounted(() => {
   getOrdersData();
 });
+
+watch(
+  () => globalStore.ordersData,
+  (newData) => {
+    data.value = newData?.data || [];
+  },
+  { immediate: true }
+);
 </script>
