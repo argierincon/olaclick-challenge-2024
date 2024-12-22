@@ -56,7 +56,7 @@
                 <BtnTableActions
                   typeBtn="success"
                   icon="Eye"
-                  @click="navigateToOrder(dataTable.id)"
+                  @click="navigateToOrder(dataTable.uid)"
                 />
               </div>
             </td>
@@ -112,12 +112,12 @@
 
     <OrderDrawer
       :visible="showOrderDrawer"
-      :orderId="order.id"
-      :client="order.client"
-      :status="order.status"
-      :items="order.items"
-      :discount="order.discount"
-      :taxRate="order.taxRate"
+      :orderId="currentOrder?.id"
+      :client="currentOrder?.client"
+      :status="currentOrder?.status"
+      :items="currentOrder?.items"
+      :discount="currentOrder?.discount"
+      :taxRate="currentOrder?.taxRate"
       @update:visible="showOrderDrawer = $event"
     />
   </section>
@@ -136,12 +136,12 @@ import {
 import { useRoute, useRouter } from "vue-router";
 import { getPaginationRange } from "../../utils/paginationDots";
 import { useGlobalStore } from "../../store";
+import { IOrder } from "../../store/interfaces/IOrders";
 
 import BtnTableActions from "../atoms/BtnTableActions.vue";
 import Chip from "../atoms/Chip.vue";
 import Select from "../atoms/Select.vue";
 import OrderDrawer from "./OrderDrawer.vue";
-import type { TStatus } from "../../interfaces/Orders";
 
 const route = useRoute();
 const router = useRouter();
@@ -257,16 +257,20 @@ const selectLimit = (limit: number): void => {
   globalStore.setLimit(limit);
 };
 
-const selectedOrderId = ref<number | null>(null);
+const selectedOrderId = ref<string | null>(null);
 const showOrderDrawer = ref(false);
 
-const navigateToOrder = async (orderId: number) => {
-  console.log(`Order ID seleccionado: ${orderId}`);
+const currentOrder = ref<IOrder | null>(null);
+
+const navigateToOrder = async (orderUid: string) => {
+  console.log(`Order ID seleccionado: ${orderUid}`);
 
   try {
-    await globalStore.getOrderDetail(orderId);
+    await globalStore.getOrderDetail(orderUid);
 
-    selectedOrderId.value = orderId;
+    currentOrder.value = globalStore.orderDetail;
+
+    selectedOrderId.value = orderUid;
     showOrderDrawer.value = true;
 
     // router.push({ name: "OrderDetail", params: { id: String(orderId) } });
@@ -277,58 +281,58 @@ const navigateToOrder = async (orderId: number) => {
 
 onMounted(() => {
   if (route.params.id) {
-    selectedOrderId.value = Number(route.params.id);
+    // selectedOrderId.value = route.params.id;
     showOrderDrawer.value = true;
   }
 });
 
-watch(
-  () => route.params.id,
-  (newId) => {
-    if (newId) {
-      selectedOrderId.value = Number(newId);
-      showOrderDrawer.value = true;
-    } else {
-      selectedOrderId.value = null;
-      showOrderDrawer.value = false;
-    }
-  }
-);
+// watch(
+//   () => route.params.id,
+//   (newId) => {
+//     if (newId) {
+//       selectedOrderId.value = newId;
+//       showOrderDrawer.value = true;
+//     } else {
+//       selectedOrderId.value = null;
+//       showOrderDrawer.value = false;
+//     }
+//   }
+// );
 
-const order = {
-  uid: "1",
-  id: 1,
-  client: "Eloise",
-  status: "started" as TStatus,
-  items: [
-    {
-      name: "Beef Crowich",
-      desc: "Emit event to notify parent to close the sidebar",
-      price: 5.5,
-      quantity: 1,
-      image:
-        "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
-    },
-    {
-      name: "Sliced Black Forest",
-      desc: "Emit event to notify parent to close the sidebar",
-      price: 5.0,
-      quantity: 2,
-      image:
-        "https://www.sugarplumbakery.org/wp-content/uploads/2022/05/A92A6026-2-1200x800.png",
-    },
-    {
-      name: "Solo Floss Bread",
-      desc: "Emit event to notify parent to close the sidebar",
-      price: 4.5,
-      quantity: 1,
-      image:
-        "https://crustabakes.wordpress.com/wp-content/uploads/2010/10/floss-bread-11.jpg",
-    },
-  ],
-  discount: 2,
-  taxRate: 0.1,
-};
+// const order = {
+//   uid: "1",
+//   id: 1,
+//   client: "Eloise",
+//   status: "started" as TStatus,
+//   items: [
+//     {
+//       name: "Beef Crowich",
+//       desc: "Emit event to notify parent to close the sidebar",
+//       price: 5.5,
+//       quantity: 1,
+//       image:
+//         "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+//     },
+//     {
+//       name: "Sliced Black Forest",
+//       desc: "Emit event to notify parent to close the sidebar",
+//       price: 5.0,
+//       quantity: 2,
+//       image:
+//         "https://www.sugarplumbakery.org/wp-content/uploads/2022/05/A92A6026-2-1200x800.png",
+//     },
+//     {
+//       name: "Solo Floss Bread",
+//       desc: "Emit event to notify parent to close the sidebar",
+//       price: 4.5,
+//       quantity: 1,
+//       image:
+//         "https://crustabakes.wordpress.com/wp-content/uploads/2010/10/floss-bread-11.jpg",
+//     },
+//   ],
+//   discount: 2,
+//   taxRate: 0.1,
+// };
 </script>
 
 <style lang="postcss" scoped>
