@@ -71,10 +71,10 @@ import ItemDrawer from "../atoms/ItemDrawer.vue";
 
 interface IProps {
   visible: boolean;
-  orderId: string | number;
-  client: string;
-  status: TStatus;
-  items: IOrderItem[];
+  orderId?: string | number;
+  client?: string;
+  status?: TStatus;
+  items?: IOrderItem[];
   discount?: number;
   taxRate?: number;
 }
