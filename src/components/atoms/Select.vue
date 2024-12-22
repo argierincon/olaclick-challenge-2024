@@ -158,7 +158,6 @@ const selectClass = computed(() => ({
   &:hover,
   &:focus,
   &:focus-within {
-    /* @apply !border-success-500; */
     transition: all 0.3s ease-out;
   }
 
@@ -168,7 +167,6 @@ const selectClass = computed(() => ({
 
   &.is-empty {
     @apply text-[#b5b5b5];
-    /* color: #b5b5b5; */
   }
 }
 </style>
