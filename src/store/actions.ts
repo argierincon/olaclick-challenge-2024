@@ -1,5 +1,5 @@
-import { fetchOrders } from "../services/apiService";
-import type { IOrdersData } from "./interfaces/IOrders";
+import { fetchOrderDetail, fetchOrders } from "../services/apiService";
+import type { IOrder, IOrdersData } from "./interfaces/IOrders";
 import type { IState } from "./state";
 
 export const actions = {
@@ -13,6 +13,16 @@ export const actions = {
       throw new Error("Failed to fetch orders");
     }
     this.ordersData = orders;
+  },
+
+  async getOrderDetail(this: IState, orderId: number) {
+    let orderDetail: IOrder;
+    try {
+      orderDetail = await fetchOrderDetail({ id: orderId });
+    } catch (error) {
+      throw new Error("Failed to fetch order detail");
+    }
+    this.orderDetail = orderDetail;
   },
 
   setLimit(this: IState, limit: number) {

@@ -146,6 +146,8 @@ import type { TStatus } from "../../interfaces/Orders";
 const route = useRoute();
 const router = useRouter();
 
+const globalStore = useGlobalStore();
+
 // Tipos
 interface ITotals {
   from: number;
@@ -220,7 +222,6 @@ const tableHeaders = [
 ];
 
 // Global State
-const globalStore = useGlobalStore();
 const optPagination = [
   { label: "Mostrar 10", value: 10 },
   { label: "Mostrar 20", value: 20 },
@@ -259,11 +260,19 @@ const selectLimit = (limit: number): void => {
 const selectedOrderId = ref<number | null>(null);
 const showOrderDrawer = ref(false);
 
-const navigateToOrder = (orderId: number) => {
+const navigateToOrder = async (orderId: number) => {
   console.log(`Order ID seleccionado: ${orderId}`);
-  selectedOrderId.value = orderId;
-  showOrderDrawer.value = true;
-  router.push({ name: "OrderDetail", params: { id: String(orderId) } });
+
+  try {
+    await globalStore.getOrderDetail(orderId);
+
+    selectedOrderId.value = orderId;
+    showOrderDrawer.value = true;
+
+    // router.push({ name: "OrderDetail", params: { id: String(orderId) } });
+  } catch (error) {
+    console.error("Error al obtener el detalle de la orden:", error);
+  }
 };
 
 onMounted(() => {

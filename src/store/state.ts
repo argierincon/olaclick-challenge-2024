@@ -1,5 +1,5 @@
 import type { TStatus } from "../interfaces/Orders";
-import type { IOrdersData } from "./interfaces/IOrders";
+import type { IOrder, IOrdersData } from "./interfaces/IOrders";
 
 const defaultOrder = {
   total: 1,
@@ -46,12 +46,14 @@ const defaultOrder = {
 
 export interface IState {
   ordersData: IOrdersData;
+  orderDetail: IOrder | null;
   tableLimit: number;
   tablePage: number;
 }
 
 export const state = (): IState => ({
   ordersData: defaultOrder,
+  orderDetail: null,
   tableLimit: 10,
   tablePage: 1,
 });
