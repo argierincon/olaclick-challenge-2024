@@ -22,7 +22,7 @@ const getOrdersData = async () => {
   try {
     isLoading.value = true;
     await globalStore.getOrders();
-    data.value = globalStore.ordersData;
+    data.value = globalStore.ordersList;
   } catch (error) {
     console.error(error);
   } finally {
