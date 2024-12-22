@@ -99,7 +99,6 @@
           Mostrando {{ tableTotals.from }} a {{ tableTotals.to }} de
           {{ tableTotals.total }} registros
         </p>
-        sss {{ globalStore.tableLimit }}
         <Select
           iconChevronUp
           size="small"
