@@ -18,24 +18,31 @@
         </thead>
 
         <tbody>
+          <tr v-if="!cleanData">
+            <td colspan="100%" class="text-center">
+              <div class="td-empty">No hay registros</div>
+            </td>
+          </tr>
+
           <tr v-for="dataTable in cleanData" :key="dataTable.id">
             <td
               v-for="(value, name) in dataTable"
               :key="name"
               :data-label="getTranslatedLabel(name)"
+              :class="{ 'hidden-id': name === 'uid' }"
             >
               <div class="data-cell">
                 <p v-if="name !== 'status'">{{ value }}</p>
 
                 <div v-if="name === 'status'">
                   <Chip
-                    v-if="dataTable.status === 'Iniciado'"
+                    v-if="dataTable.status === 'started'"
                     label="Iniciado"
                     type="info"
                     light
                   />
                   <Chip
-                    v-if="dataTable.status === 'Enviado'"
+                    v-if="dataTable.status === 'delivered'"
                     label="Enviado"
                     type="success"
                     light
@@ -49,7 +56,7 @@
                 <BtnTableActions
                   typeBtn="success"
                   icon="Eye"
-                  @click="prueba(dataTable.id)"
+                  @click="navigateToOrder(dataTable.id)"
                 />
               </div>
             </td>
@@ -92,18 +99,17 @@
           Mostrando {{ tableTotals.from }} a {{ tableTotals.to }} de
           {{ tableTotals.total }} registros
         </p>
+        sss {{ globalStore.tableLimit }}
         <Select
           iconChevronUp
           size="small"
           placeholder="Mostrar 10"
-          :selected="globalState.tableLimit"
+          :selected="globalStore.tableLimit"
           :options="optPagination"
           @change="selectLimit"
         />
       </div>
     </div>
-
-    <!-- <OrderDrawer v-if="showOrderDrawer" :orderId="selectedOrderId" /> -->
 
     <OrderDrawer
       :visible="showOrderDrawer"
@@ -119,7 +125,16 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, reactive, ref, toRefs } from "vue";
+import {
+  defineProps,
+  computed,
+  reactive,
+  ref,
+  toRefs,
+  onMounted,
+  watch,
+} from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { getPaginationRange } from "../../utils/paginationDots";
 import { useGlobalStore } from "../../store";
 
@@ -127,6 +142,10 @@ import BtnTableActions from "../atoms/BtnTableActions.vue";
 import Chip from "../atoms/Chip.vue";
 import Select from "../atoms/Select.vue";
 import OrderDrawer from "./OrderDrawer.vue";
+import type { TStatus } from "../../interfaces/Orders";
+
+const route = useRoute();
+const router = useRouter();
 
 // Tipos
 interface ITotals {
@@ -140,8 +159,8 @@ type PaginationButton = number | string;
 const props = defineProps({
   tableData: {
     type: Array as () => {
+      uid: string;
       id: number;
-      order: number;
       time: string;
       detail: string;
       client: string;
@@ -155,6 +174,7 @@ const props = defineProps({
 const { tableData } = toRefs(props);
 
 const nameMapping = {
+  uid: "uid",
   id: "ID",
   time: "Hora",
   detail: "Detalle",
@@ -165,6 +185,7 @@ const nameMapping = {
 
 const cleanData = computed(
   (): {
+    uid: string;
     id: number;
     time: string;
     detail: string;
@@ -172,7 +193,8 @@ const cleanData = computed(
     total: string;
     status: string;
   }[] => {
-    return tableData.value.map((e) => ({
+    return tableData.value?.map((e) => ({
+      uid: e.uid,
       id: e.id,
       time: e.time,
       detail: e.detail,
@@ -189,7 +211,7 @@ const getTranslatedLabel = (name: keyof typeof nameMapping): string => {
 
 // Constantes
 const tableHeaders = [
-  "ID",
+  "Nº",
   "Hora",
   "Detalle",
   "Cliente",
@@ -199,7 +221,7 @@ const tableHeaders = [
 ];
 
 // Global State
-const globalState = useGlobalStore();
+const globalStore = useGlobalStore();
 const optPagination = [
   { label: "Mostrar 10", value: 10 },
   { label: "Mostrar 20", value: 20 },
@@ -214,36 +236,60 @@ const tableTotals = reactive<ITotals>({
   total: 0,
 });
 
-const { tableLimit, tablePage, tableTotal } = globalState;
+const { tableLimit, tablePage, tableTotal } = globalStore;
 tableTotals.from = tableLimit * tablePage - tableLimit + 1;
 tableTotals.to = Math.min(tableLimit * tablePage, tableTotal);
 tableTotals.total = tableTotal;
 
 const totalButtons = ref<PaginationButton[]>([]);
 const totalPageCount = Math.ceil(tableTotal / tableLimit) || 0;
-totalButtons.value = getPaginationRange(totalPageCount, globalState.tablePage);
+totalButtons.value = getPaginationRange(totalPageCount, globalStore.tablePage);
 
 // Métodos
 const changePage = (page: PaginationButton): void => {
   if (typeof page === "string") return;
-  globalState.setPage(page);
+  globalStore.setPage(page);
 };
 
 const selectLimit = (limit: number): void => {
-  globalState.setLimit(limit);
+  console.log("limit", limit);
+
+  globalStore.setLimit(limit);
 };
 
+const selectedOrderId = ref<number | null>(null);
 const showOrderDrawer = ref(false);
 
-const prueba = (id: number) => {
-  console.log(id);
+const navigateToOrder = (orderId: number) => {
+  console.log(`Order ID seleccionado: ${orderId}`);
+  selectedOrderId.value = orderId;
   showOrderDrawer.value = true;
+  router.push({ name: "OrderDetail", params: { id: String(orderId) } });
 };
 
-type TStatus = "started" | "delivered" | "finished";
+onMounted(() => {
+  if (route.params.id) {
+    selectedOrderId.value = Number(route.params.id);
+    showOrderDrawer.value = true;
+  }
+});
+
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (newId) {
+      selectedOrderId.value = Number(newId);
+      showOrderDrawer.value = true;
+    } else {
+      selectedOrderId.value = null;
+      showOrderDrawer.value = false;
+    }
+  }
+);
 
 const order = {
-  id: 12345,
+  uid: "1",
+  id: 1,
   client: "Eloise",
   status: "started" as TStatus,
   items: [
@@ -279,7 +325,7 @@ const order = {
 
 <style lang="postcss" scoped>
 .table {
-  @apply w-full border-spacing-0 text-sm;
+  @apply w-full border-spacing-0;
 
   & thead {
     @apply bg-gray-100 rounded-[10px] text-gray-600;
@@ -308,6 +354,10 @@ const order = {
 th:not([align]),
 td:not([align]) {
   text-align: inherit;
+}
+
+.td-empty {
+  @apply flex justify-center text-base;
 }
 
 .table-wrapper td.hidden-id {
