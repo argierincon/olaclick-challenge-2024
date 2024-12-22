@@ -62,19 +62,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits, toRefs } from "vue";
+import { computed, defineProps, defineEmits, toRefs } from "vue";
+import type { TStatus } from "../../interfaces/Orders";
+import type { IOrderItem } from "../../store/interfaces/IOrders";
+
 import Chip from "../atoms/Chip.vue";
 import ItemDrawer from "../atoms/ItemDrawer.vue";
-
-type TStatus = "started" | "delivered" | "finished";
-
-interface IOrderItem {
-  name: string;
-  price: number;
-  desc: string;
-  quantity: number;
-  image: string;
-}
 
 interface IProps {
   visible: boolean;
