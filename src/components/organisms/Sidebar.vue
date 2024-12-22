@@ -32,9 +32,9 @@ import { useRoute } from "vue-router";
 import SidebarItem from "../atoms/SidebarItem.vue";
 
 const items = [
-  { label: "Órdenes", path: "/" },
   { label: "Iniciar demo" },
   { label: "Simular segundo usuario" },
+  { label: "Órdenes", path: "/orders" },
   // { label: "Reservas" },
   // { label: "Menú" },
   // { label: "Clientes Frecuentes" },
@@ -60,7 +60,7 @@ watch(route, (newRoute) => {
 }
 
 .brand-name {
-  @apply text-[#0B5AF7] font-medium text-xl;
+  @apply text-[#0B5AF7] font-semibold text-xl;
 }
 
 .slogan {
