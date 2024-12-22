@@ -20,3 +20,9 @@ export interface IOrder {
   discount: number;
   taxRate:  number;
 }
+
+export interface IOrdersData { 
+  data:   IOrder[],
+  total:  number,
+}
+
