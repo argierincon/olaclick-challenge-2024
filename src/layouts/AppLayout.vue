@@ -13,13 +13,8 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter } from "vue-router";
-
 import Header from "../components/organisms/Header.vue";
 import Sidebar from "../components/organisms/Sidebar.vue";
-
-const route = useRoute();
-const router = useRouter();
 </script>
 
 <style lang="postcss" scoped>
@@ -41,10 +36,15 @@ const router = useRouter();
 }
 
 .content {
+  @apply py-4;
   grid-column: 2;
   grid-row: 2;
-  padding: 1rem;
   overflow-y: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none; /* Safari y Chrome */
+  }
 }
 
 ::v-deep .slide-enter-active,
