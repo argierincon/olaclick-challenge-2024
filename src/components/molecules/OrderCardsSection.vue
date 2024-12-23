@@ -1,7 +1,10 @@
 <template>
   <section class="order-card-section">
-    <h3 class="text-xl">Órdenes enviadas recientemente</h3>
+    <h3 class="text-xl">Tracking de órdenes enviadas</h3>
     <div class="card-list">
+      <div class="card-default">
+        <p class="text-sm">No hay órdenes entregadas</p>
+      </div>
       <OrderCard
         v-for="(order, index) in ordersList"
         :key="index"
@@ -58,5 +61,9 @@ defineProps<IProps>();
 
 .order-card {
   @apply w-56;
+}
+
+.card-default {
+  @apply w-56 h-56 p-4 flex items-center bg-gray-100 rounded-xl shadow-sm;
 }
 </style>
