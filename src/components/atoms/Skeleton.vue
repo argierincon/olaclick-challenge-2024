@@ -1,5 +1,5 @@
 <template>
-  <div :class="skeletonClasses"></div>
+  <div :class="skeletonClasses" :style="skeletonStyle"></div>
 </template>
 
 <script setup lang="ts">
@@ -12,7 +12,7 @@ interface ISkeletonProps {
 }
 
 const props = withDefaults(defineProps<ISkeletonProps>(), {
-  width: "100%",
+  width: "100px",
   height: "20px",
   borderRadius: "100px",
 });
@@ -20,16 +20,18 @@ const props = withDefaults(defineProps<ISkeletonProps>(), {
 const skeletonClasses = computed(() => [
   "skeleton",
   {
-    [`w-[${props.width}]`]: props.width,
-    [`h-[${props.height}]`]: props.height,
     [`rounded-[${props.borderRadius}]`]: props.borderRadius,
   },
 ]);
+
+const skeletonStyle = computed(() => ({
+  width: props.width,
+  height: props.height,
+}));
 </script>
 
 <style lang="postcss" scoped>
 .skeleton {
-  @apply w-full h-[20px] rounded-[100px];
   background: linear-gradient(
     90deg,
     rgba(98, 98, 98, 0.06) 25%,
