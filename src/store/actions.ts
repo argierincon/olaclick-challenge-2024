@@ -8,15 +8,36 @@ import {
   doc,
   getDoc,
   onSnapshot,
+  getCountFromServer,
+  updateDoc,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../services/firebase";
 
 import type { IOrder } from "./interfaces/IOrders";
 import type { IState } from "./state";
-import { generateRandomOrders } from "../services/menu";
+import { generateOrder, generateRandomOrders } from "../services/menu";
+import type { TStatus } from "../interfaces/Orders";
+
+let updateLoopTimeout: any = null;
 
 export const actions = {
-  async addOrderToCollection() {
+  async addSingleOrderToCollection() {
+    try {
+      const order = generateOrder();
+
+      const ordersCollection = collection(db, "orders");
+
+      const docRef = await addDoc(ordersCollection, order);
+
+      console.log(`Orden creada con ID: ${docRef.id}`);
+      return docRef.id;
+    } catch (error) {
+      throw new Error("Failed to create a single order in Firestore");
+    }
+  },
+  async addOrdersToCollection() {
     try {
       let count = 0;
 
@@ -27,7 +48,6 @@ export const actions = {
           // console.log(`Orden ${count + 1}:`, orders);
           count++;
 
-          // crear ordenes en firebase
           const ordersCollection = collection(db, "orders");
           const docRefs = orders.map((order) =>
             addDoc(ordersCollection, order)
@@ -45,7 +65,6 @@ export const actions = {
         }
       };
 
-      // Iniciar la llamada inicial
       await generateNextOrder();
     } catch (error) {
       console.log(error);
@@ -53,13 +72,14 @@ export const actions = {
       throw new Error("Failed to add order to Firestore");
     }
   },
-
   async getOrders(this: IState) {
     try {
       const ordersCollection = collection(db, "orders");
 
       const q = query(
         ordersCollection,
+        where("status", "in", ["started", "delivered"]),
+        orderBy("status"),
         orderBy("id"),
         limit(this.tableLimit),
         startAfter(
@@ -74,15 +94,19 @@ export const actions = {
           uid: doc.id,
         }));
 
-        this.ordersData = { data: orders, total: orders.length };
+        this.ordersData = orders;
+
+        getCountFromServer(q).then((snapshot) => {
+          this.tableTotal = snapshot.data().count;
+        });
       });
     } catch (error) {
       throw new Error("Failed to fetch orders");
     }
   },
-  async getOrderDetail(this: IState, orderId: string) {
+  async getOrderDetail(this: IState, uid: string) {
     try {
-      const orderDocRef = doc(db, "orders", orderId);
+      const orderDocRef = doc(db, "orders", uid);
 
       const orderDoc = await getDoc(orderDocRef);
 
@@ -100,12 +124,93 @@ export const actions = {
       throw new Error("Failed to fetch order detail");
     }
   },
+  async updateOrderStatus(this: IState, uid: string, newStatus: TStatus) {
+    try {
+      const orderDocRef = doc(db, "orders", uid);
 
+      await updateDoc(orderDocRef, {
+        status: newStatus,
+      });
+
+      console.log(`Order ${uid} status updated to ${newStatus}`);
+    } catch (error) {
+      console.log("Error updating order status:", error);
+      throw new Error("Failed to update order status");
+    }
+  },
+  async updateOldestOrderStatus() {
+    try {
+      const ordersCollection = collection(db, "orders");
+
+      // Consulta la orden más antigua que no tenga el estado 'finished'
+      const q = query(
+        ordersCollection,
+        where("status", "in", ["started", "delivered"]),
+        orderBy("time"),
+        limit(1)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        const order = doc.data();
+
+        let newStatus: TStatus;
+
+        // Cambiar el estado de la orden
+        if (order.status === "started") {
+          newStatus = "delivered";
+        } else if (order.status === "delivered") {
+          newStatus = "finished";
+        } else {
+          return false;
+        }
+
+        // Actualizar el estado de la orden
+        const orderDocRef = doc.ref;
+        await updateDoc(orderDocRef, { status: newStatus });
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error(
+        "Error al actualizar el estado de la orden más antigua:",
+        error
+      );
+      throw new Error("Failed to update the status of the oldest order");
+    }
+  },
+  async startUpdatingOldOrders() {
+    const interval = 3000;
+
+    const updateLoop = async () => {
+      const hasUpdated = await actions.updateOldestOrderStatus();
+
+      if (hasUpdated) {
+        updateLoopTimeout = setTimeout(updateLoop, interval);
+      } else {
+        console.log("No quedan órdenes pendientes. Proceso detenido.");
+        updateLoopTimeout = null; // Limpia el timeout activo
+      }
+    };
+
+    updateLoop();
+  },
+  stopUpdatingOldOrders() {
+    if (updateLoopTimeout) {
+      clearTimeout(updateLoopTimeout);
+      updateLoopTimeout = null;
+      console.log("Proceso de actualización detenido manualmente.");
+    } else {
+      console.log("No hay un proceso de actualización en ejecución.");
+    }
+  },
   setLimit(this: IState, limit: number) {
     this.tableLimit = limit;
     this.tablePage = 1;
   },
-
   setPage(this: IState, page: number) {
     this.tablePage = page;
   },
