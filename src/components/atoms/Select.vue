@@ -1,7 +1,7 @@
 <template>
   <div class="field">
-    <label class="label"
-      >{{ label }}
+    <label class="label">
+      {{ label }}
       <span v-show="hasRequiredLabel" class="text-error-500">*</span>
     </label>
     <div class="box-select" :class="selectClass">
@@ -43,7 +43,6 @@ interface IOption {
 }
 
 interface Props {
-  modelValue: string;
   label?: string;
   size?: "large" | "medium" | "small";
   hasRequiredLabel?: boolean;
@@ -51,20 +50,17 @@ interface Props {
   hasEmptyValue?: boolean;
   required?: boolean;
   options: IOption[];
-  iconChevronUp?: boolean;
   selected?: string | number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: "",
   placeholder: "Placeholder",
   size: "large",
   selected: "",
   hasEmptyValue: false,
 });
 
-const { placeholder, size, selected, iconChevronUp, hasEmptyValue } =
-  toRefs(props);
+const { placeholder, size, selected, hasEmptyValue } = toRefs(props);
 
 const localModel = ref<string | number>(selected.value);
 const emit = defineEmits(["change"]);
@@ -83,8 +79,7 @@ const selectClass = computed(() => ({
   large: size.value === "large",
   medium: size.value === "medium",
   small: size.value === "small",
-  "chevron-down": !iconChevronUp.value,
-  "chevron-up": iconChevronUp.value,
+  "chevron-down": true, // Siempre muestra el chevron-down
 }));
 </script>
 
@@ -96,12 +91,6 @@ const selectClass = computed(() => ({
 .chevron-down {
   &::after {
     content: url("/static/chevron-down.svg");
-  }
-}
-
-.chevron-up {
-  &::after {
-    content: url("/static/chevron-up.svg");
   }
 }
 
@@ -141,7 +130,7 @@ const selectClass = computed(() => ({
 
   &.small {
     .select {
-      @apply h-8 py-[6.5px] pl-[10px]  rounded-lg text-xs;
+      @apply h-8 py-[6.5px] pl-[10px] rounded-lg text-xs;
     }
   }
 }
@@ -152,7 +141,7 @@ const selectClass = computed(() => ({
   @apply text-sm text-gray-900;
   transition: all 0.3s ease-out;
   -moz-appearance: none; /* Firefox */
-  -webkit-appearance: none; /* Safari and Chrome */
+  -webkit-appearance: none; /* Safari y Chrome */
 
   &:active,
   &:hover,
