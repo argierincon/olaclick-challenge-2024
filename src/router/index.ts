@@ -6,6 +6,7 @@ import {
 
 import AppLayout from "../layouts/AppLayout.vue";
 import Orders from "../views/Orders.vue";
+import OrderDrawer from "../components/organisms/OrderDrawer.vue";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -20,11 +21,14 @@ const routes: RouteRecordRaw[] = [
         path: "",
         name: "Orders",
         component: Orders,
+        children: [
+          {
+            path: "id-:id",
+            name: "OrderDetail",
+            component: OrderDrawer,
+          },
+        ],
       },
-      // {
-      //   path: "id-:id",
-      //   name: "OrderDetail",
-      // },
     ],
   },
   {
