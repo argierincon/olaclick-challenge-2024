@@ -211,14 +211,14 @@ const desserts = [
 
 let currentOrderId = 1;
 
-const generateOrder = () => {
+export const generateOrder = () => {
   // Generar un ID de orden secuencial
   const orderId = currentOrderId++;
 
   // Seleccionar un cliente aleatorio
   const randomClient = clients[Math.floor(Math.random() * clients.length)];
 
-  // Función para seleccionar un item aleatorio
+  // Seleccionar un item aleatorio
   const getRandomItem = (array: any[]) => {
     const randomIndex = Math.floor(Math.random() * array.length);
     return array[randomIndex];
@@ -240,7 +240,7 @@ const generateOrder = () => {
       } else {
         items.push({
           name: item.name,
-          desc: item.description || "", // Si no hay descripción, asignar string vacío
+          desc: item.description || "",
           price: item.price,
           quantity,
           image: item.image,
@@ -271,15 +271,15 @@ const generateOrder = () => {
 
   // Crear la estructura de la orden
   const order = {
-    id: orderId, // ID único secuencial
-    time: new Date().toISOString(), // Hora actual
-    client: randomClient.client, // Cliente aleatorio
-    status: "started", // Estado inicial
-    items, // Items seleccionados
-    subtotal, // Subtotal
-    total, // Total con impuestos
-    discount, // Descuento
-    taxRate, // Tasa de impuesto
+    id: orderId,
+    time: new Date().toISOString(),
+    client: randomClient.client,
+    status: "started",
+    items,
+    subtotal,
+    total,
+    discount,
+    taxRate,
   };
 
   return order;
