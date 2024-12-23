@@ -2,7 +2,7 @@
   <div class="order-card">
     <div class="order-card__header">
       <div class="header-detail">
-        <p class="name">{{ client }}</p>
+        <p class="name" :title="client">{{ truncate(client, 10) }}</p>
         <p class="order-id">ID de orden: {{ orderId }}</p>
       </div>
       <Chip label="Enviado" type="success" size="small" />
@@ -11,8 +11,14 @@
     <div class="rounded-dashes-total"></div>
     <div class="order-card__content">
       <div>
-        <p v-for="(item, index) in items" :key="index" class="item-name">
+        <p v-for="(item, index) in visibleItems" :key="index" class="item-name">
           {{ item.quantity }}x {{ truncate(item.name, 20) }}
+        </p>
+        <p
+          v-if="items.length > 5"
+          class="flex items-center !h-1 !text-2xl text-start"
+        >
+          ...
         </p>
       </div>
       <div class="mt-auto flex items-center justify-between">
@@ -24,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
+import { defineProps, computed, toRefs } from "vue";
 import Chip from "./Chip.vue";
 
 interface IItem {
@@ -44,7 +50,11 @@ const truncate = (text: string, maxLength: number): string => {
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
 };
 
-defineProps<IProps>();
+const props = defineProps<IProps>();
+
+const { items } = toRefs(props);
+
+const visibleItems = computed(() => items.value.slice(0, 4));
 </script>
 
 <style lang="postcss" scoped>
@@ -72,6 +82,10 @@ defineProps<IProps>();
   p,
   span {
     @apply text-sm;
+  }
+
+  .text-gray-500 {
+    @apply text-center italic;
   }
 }
 
