@@ -9,20 +9,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { useRouter } from "vue-router";
 
 interface IProps {
   path?: string;
   currentRoute: string;
   disabled?: boolean;
+  isActive?: boolean;
 }
 
 const props = defineProps<IProps>();
 
 const router = useRouter();
-
-const isActive = computed(() => props.currentRoute === props.path);
 
 const navigate = () => {
   if (props.path && !props.disabled) {
@@ -33,7 +31,7 @@ const navigate = () => {
 
 <style lang="postcss" scoped>
 .nav-button {
-  @apply flex items-center justify-start gap-3 w-full p-4 rounded-lg bg-white;
+  @apply w-full p-4 rounded-lg bg-white text-left;
   @apply hover:bg-blue-50 hover:text-blue-700 transition-all duration-200;
 
   &.active {
