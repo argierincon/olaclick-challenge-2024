@@ -1,6 +1,6 @@
 <template>
   <Drawer :isDrawerVisible="isDrawerVisible" @close="closeDrawer">
-    <section>
+    <section class="order-drawer-section">
       <header class="order-drawer__header">
         <div class="header-info">
           <h4 class="flex-skeleton">
@@ -241,6 +241,10 @@ onMounted(() => {
 </script>
 
 <style lang="postcss" scoped>
+.order-drawer-section {
+  @apply h-full grid grid-rows-[100px_1fr_250px];
+}
+
 .order-drawer {
   @apply h-full w-full flex flex-col gap-y-6 fixed right-0 top-0 z-10 bg-white shadow-lg;
   @apply md:w-[50%];
@@ -286,7 +290,7 @@ onMounted(() => {
 }
 
 .footer-waves {
-  @apply pt-8 pb-6 px-6 bg-[#f6f6f6];
+  @apply h-full pt-8 pb-6 px-6 bg-[#f6f6f6];
   --mask: radial-gradient(12.81px at 50% 18px, #000 99%, #0000 101%)
       calc(50% - 20px) 0/40px 100%,
     radial-gradient(12.81px at 50% -8px, #0000 99%, #000 101%) 50% 10px/40px
