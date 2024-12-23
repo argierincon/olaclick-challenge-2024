@@ -23,7 +23,7 @@
     <section class="sidebar__mkt">
       <div>
         <div class="flex items-center gap-x-3">
-          <p class="brand-name">DeliciaHouse</p>
+          <p class="brand-name">DeliHouse</p>
           <span class="h-[5px] w-[5px] bg-[#2e71f9] rounded-full"></span>
           <p class="text-gray-400 text-sm">Pos System</p>
         </div>
