@@ -9,9 +9,15 @@ import Calendar from "../icons/Calendar.vue";
 import ChevronLeft from "../icons/ChevronLeft.vue";
 import ChevronRight from "../icons/ChevronRight.vue";
 import Clock from "../icons/Clock.vue";
+import Close from "../icons/Close.vue";
+import CloseCircle from "../icons/CloseCircle.vue";
+import CloseSmall from "../icons/CloseSmall.vue";
 import Edit from "../icons/Edit.vue";
 import Eye from "../icons/Eye.vue";
+import Info from "../icons/Info.vue";
 import MenuBurger from "../icons/MenuBurger.vue";
+import Plus from "../icons/Plus.vue";
+import Spinner from "../icons/Spinner.vue";
 import Trash from "../icons/Trash.vue";
 
 const icons = {
@@ -20,17 +26,23 @@ const icons = {
   ChevronLeft,
   ChevronRight,
   Clock,
+  Close,
+  CloseCircle,
+  CloseSmall,
   Edit,
   Eye,
+  Info,
   MenuBurger,
+  Plus,
+  Spinner,
   Trash,
 } as const;
 
-type IconNames = keyof typeof icons;
+export type TIconNames = keyof typeof icons;
 
 defineProps({
   name: {
-    type: String as () => IconNames,
+    type: String as () => TIconNames,
     required: true,
   },
 });
