@@ -2,10 +2,11 @@
   <section class="order-card-section">
     <h3 class="text-xl">Tracking de órdenes enviadas</h3>
     <div class="card-list">
-      <div class="card-default">
+      <div v-if="ordersList.length === 0" class="card-default">
         <p class="text-sm">No hay órdenes entregadas</p>
       </div>
       <OrderCard
+        v-else
         v-for="(order, index) in ordersList"
         :key="index"
         :client="order.client"
@@ -29,7 +30,7 @@ interface IItem {
 
 interface IOrder {
   client: string;
-  orderId: string;
+  orderId: number;
   status: string;
   items: IItem[];
   total: number;
@@ -64,6 +65,6 @@ defineProps<IProps>();
 }
 
 .card-default {
-  @apply w-56 h-56 p-4 flex items-center bg-gray-100 rounded-xl shadow-sm;
+  @apply w-56 h-56 p-4 flex items-center justify-center bg-gray-100 rounded-xl shadow-sm;
 }
 </style>
