@@ -198,6 +198,29 @@ export const actions = {
 
     updateLoop();
   },
+  async getRecentFinishedOrders(this: IState) {
+    try {
+      const ordersCollection = collection(db, "orders");
+
+      const q = query(
+        ordersCollection,
+        where("status", "==", "finished"),
+        orderBy("time", "desc"),
+        limit(6)
+      );
+
+      onSnapshot(q, (querySnapshot) => {
+        const recentFinishedOrders = querySnapshot.docs.map((doc) => ({
+          ...(doc.data() as IOrder),
+          uid: doc.id,
+        }));
+
+        this.lastFinishedOrders = recentFinishedOrders;
+      });
+    } catch (error) {
+      throw new Error("Failed to fetch recent finished orders");
+    }
+  },
   stopUpdatingOldOrders() {
     if (updateLoopTimeout) {
       clearTimeout(updateLoopTimeout);
