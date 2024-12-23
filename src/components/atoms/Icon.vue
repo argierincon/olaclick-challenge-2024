@@ -15,6 +15,7 @@ import CloseSmall from "../icons/CloseSmall.vue";
 import Edit from "../icons/Edit.vue";
 import Eye from "../icons/Eye.vue";
 import Info from "../icons/Info.vue";
+import Magnify from "../icons/Magnify.vue";
 import MenuBurger from "../icons/MenuBurger.vue";
 import Plus from "../icons/Plus.vue";
 import Spinner from "../icons/Spinner.vue";
@@ -32,6 +33,7 @@ const icons = {
   Edit,
   Eye,
   Info,
+  Magnify,
   MenuBurger,
   Plus,
   Spinner,
