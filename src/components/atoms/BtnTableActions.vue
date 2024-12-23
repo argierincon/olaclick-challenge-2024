@@ -11,17 +11,17 @@
 
 <script setup lang="ts">
 import { defineProps, withDefaults } from "vue";
-import Icon from "./Icon.vue";
+import Icon, { type TIconNames } from "./Icon.vue";
 
 interface Props {
   typeBtn?: "default" | "success" | "info" | "error";
   disabled?: boolean;
-  icon: string;
+  icon: TIconNames;
 }
 
 withDefaults(defineProps<Props>(), {
   typeBtn: "default",
-  icon: "plus",
+  icon: "ChevronRight",
   disabled: false,
 });
 </script>
@@ -41,7 +41,7 @@ withDefaults(defineProps<Props>(), {
   }
 
   &:disabled {
-    @apply opacity-50 text-red-400;
+    @apply opacity-50;
   }
 }
 
