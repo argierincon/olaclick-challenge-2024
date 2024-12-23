@@ -11,8 +11,8 @@
     <div class="rounded-dashes-total"></div>
     <div class="order-card__content">
       <div>
-        <p v-for="(item, index) in items" :key="index">
-          {{ item.quantity }}x {{ item.name }}
+        <p v-for="(item, index) in items" :key="index" class="item-name">
+          {{ item.quantity }}x {{ truncate(item.name, 20) }}
         </p>
       </div>
       <div class="mt-auto flex items-center justify-between">
@@ -40,12 +40,16 @@ interface IProps {
   total: number;
 }
 
+const truncate = (text: string, maxLength: number): string => {
+  return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+};
+
 defineProps<IProps>();
 </script>
 
 <style lang="postcss" scoped>
 .order-card {
-  @apply w-56 h-56 p-4 grid grid-rows-[50px_2px_auto] gap-1 bg-white border rounded-xl shadow-sm;
+  @apply min-w-56 min-h-56 max-w-56 max-h-56 p-4 grid grid-rows-[50px_2px_auto] gap-1 bg-white border rounded-xl shadow-sm;
 }
 
 .order-card__header {
