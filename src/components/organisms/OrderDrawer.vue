@@ -1,89 +1,129 @@
 <template>
-  <transition name="fade">
+  <Drawer :isDrawerVisible="isDrawerVisible" @close="closeDrawer">
     <section>
-      <div v-if="visible" class="overlay" @click="close"></div>
-
-      <transition name="slide-in">
-        <div v-if="visible" class="order-drawer">
-          <header class="order-drawer__header">
-            <div class="header-info">
-              <h4>Cliente: {{ client }}</h4>
-              <p>ID de la Orden: {{ orderId }}</p>
-            </div>
-
-            <Chip :label="statusLabel" :type="statusType" :light="isLight" />
-          </header>
-
-          <section class="order-drawer__items">
-            <div class="items-header">
-              <p class="pl-4 rounded-full">Item</p>
-              <p class="items-amounts">Costo Unit.</p>
-              <p class="items-amounts">Cantidad</p>
-              <p class="items-amounts">Total</p>
-            </div>
-
-            <ItemDrawer
-              v-for="(item, index) in items"
-              :key="index"
-              :item="item"
-            />
-          </section>
-
-          <footer class="order-drawer__footer">
-            <div class="footer-waves">
-              <div class="total-grid mb-2">
-                <span class="text-sm">Subtotal</span>
-                <span>$</span>
-                <span class="text-end">
-                  {{ subtotal.toFixed(2) }}
-                </span>
-              </div>
-
-              <div class="total-grid mb-2 text-gray-500">
-                <span class="text-sm">Tax (10%)</span>
-                <span>$</span>
-                <span class="text-end">{{ tax.toFixed(2) }}</span>
-              </div>
-              <div class="rounded-dashes-total"></div>
-
-              <div class="total-grid mt-4 font-bold text-lg">
-                <span>TOTAL</span>
-                <span>$</span>
-                <span class="text-end">{{ total.toFixed(2) }}</span>
-              </div>
-
-              <button class="order-drawer__btn">Entregar Orden</button>
-            </div>
-          </footer>
+      <header class="order-drawer__header">
+        <div class="header-info">
+          <h4 class="flex-skeleton">
+            Cliente:
+            <Skeleton v-if="isLoading" width="140px" height="28px" />
+            {{ globalStore.orderDetail?.client }}
+          </h4>
+          <p class="flex-skeleton">
+            ID de la Orden:
+            <Skeleton v-if="isLoading" width="40px" height="16px" />
+            {{ globalStore.orderDetail?.id }}
+          </p>
         </div>
-      </transition>
+
+        <Skeleton v-if="isLoading" width="80px" height="36px" />
+        <Chip v-else :label="statusLabel" :type="statusType" :light="isLight" />
+      </header>
+
+      <section class="order-drawer__items">
+        <div class="items-header">
+          <p class="pl-4 rounded-full">Item</p>
+          <p class="items-amounts">Costo Unit.</p>
+          <p class="items-amounts">Cantidad</p>
+          <p class="items-amounts">Total</p>
+        </div>
+
+        <ItemDrawerSkeleton v-if="isLoading" />
+        <ItemDrawerSkeleton v-if="isLoading" />
+        <ItemDrawer
+          v-for="(item, index) in globalStore.orderDetail?.items"
+          :key="index"
+          :item="item"
+        />
+      </section>
+
+      <footer class="order-drawer__footer">
+        <div class="footer-waves">
+          <div class="total-grid mb-2">
+            <span class="text-sm">Subtotal</span>
+            <span>$</span>
+            <div>
+              <Skeleton v-if="isLoading" width="60px" height="26px" />
+              <span v-else>
+                {{ subtotal?.toFixed(2) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="total-grid mb-2 text-gray-500">
+            <span class="text-sm">Tax (10%)</span>
+            <span>$</span>
+            <div>
+              <Skeleton v-if="isLoading" width="60px" height="26px" />
+              <span v-else>{{ tax.toFixed(2) }}</span>
+            </div>
+          </div>
+          <div class="rounded-dashes-total"></div>
+
+          <div class="total-grid mt-4 font-bold text-lg">
+            <span>TOTAL</span>
+            <span>$</span>
+            <div>
+              <Skeleton v-if="isLoading" width="60px" height="26px" />
+              <span v-else>{{ total.toFixed(2) }}</span>
+            </div>
+          </div>
+
+          <button
+            v-if="globalStore.orderDetail?.status !== 'finished'"
+            class="order-drawer__btn"
+            @click="markAsDelivered"
+            :class="buttonClass"
+          >
+            <Icon class="text-white" v-if="isLoadingStatus" name="Spinner" />
+            <span v-else>
+              {{ buttonLabel }}
+            </span>
+          </button>
+        </div>
+      </footer>
     </section>
-  </transition>
+  </Drawer>
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, defineEmits, toRefs } from "vue";
+import { ref, computed, defineProps, onMounted } from "vue";
 import type { TStatus } from "../../interfaces/Orders";
-import type { IOrderItem } from "../../store/interfaces/IOrders";
+import { useGlobalStore } from "../../store";
 
 import Chip from "../atoms/Chip.vue";
 import ItemDrawer from "../atoms/ItemDrawer.vue";
+import Icon from "../atoms/Icon.vue";
+import Skeleton from "../atoms/Skeleton.vue";
+import ItemDrawerSkeleton from "../atoms/ItemDrawerSkeleton.vue";
+import Drawer from "../atoms/Drawer.vue";
+
+const globalStore = useGlobalStore();
 
 interface IProps {
-  visible: boolean;
-  orderId?: string | number;
-  client?: string;
-  status?: TStatus;
-  items?: IOrderItem[];
-  discount?: number;
-  taxRate?: number;
+  isDrawerVisible: boolean;
+  uid?: string;
 }
 
-const props = defineProps<IProps>();
+defineProps<IProps>();
 
-const { status, items, taxRate, discount } = toRefs(props);
+const isLoading = ref(false);
 
-const emit = defineEmits(["update:visible"]);
+const onGetCurrentOrder = async () => {
+  const orderUid = localStorage.getItem("currentOrderId");
+
+  if (orderUid) {
+    try {
+      isLoading.value = true;
+      await globalStore.getOrderDetail(orderUid);
+    } catch (error) {
+      console.error("Error loading order details:", error);
+    } finally {
+      isLoading.value = false;
+    }
+  } else {
+    console.warn("No current order ID found in localStorage.");
+  }
+};
 
 const statusLabel = computed(() => {
   const statusMap: Record<TStatus, string> = {
@@ -92,11 +132,13 @@ const statusLabel = computed(() => {
     finished: "Entregado",
   };
 
-  return statusMap[props.status] || "";
+  const status = globalStore.orderDetail?.status;
+
+  return (status && statusMap[status]) || "";
 });
 
 const statusType = computed(() => {
-  switch (status.value) {
+  switch (globalStore.orderDetail?.status) {
     case "started":
       return "info";
     case "delivered":
@@ -109,29 +151,96 @@ const statusType = computed(() => {
 });
 
 const isLight = computed(() => {
-  return status.value === "started" || status.value === "delivered";
+  return (
+    globalStore.orderDetail?.status === "started" ||
+    globalStore.orderDetail?.status === "delivered"
+  );
 });
 
 const subtotal = computed(() =>
-  items.value.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  globalStore.orderDetail?.items.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  )
 );
 
-const tax = computed(() => subtotal.value * (taxRate.value ?? 0.1));
+const tax = computed(
+  () => subtotal.value * (globalStore.orderDetail?.taxRate ?? 0.1)
+);
 
 const total = computed(
-  () => subtotal.value + tax.value - (discount.value ?? 0)
+  () => subtotal.value + tax.value - (globalStore.orderDetail?.discount ?? 0)
 );
 
-const close = () => {
-  emit("update:visible", false);
+const isLoadingStatus = ref(false);
+
+const markAsDelivered = async () => {
+  try {
+    isLoadingStatus.value = true;
+
+    let newStatus: TStatus;
+
+    if (globalStore.orderDetail?.status === "started") {
+      newStatus = "delivered";
+    } else if (globalStore.orderDetail?.status === "delivered") {
+      newStatus = "finished";
+    } else {
+      throw new Error("El estado actual no permite una transición.");
+    }
+
+    if (!globalStore.orderDetail?.uid) {
+      console.error("UID is undefined or null");
+      return;
+    }
+
+    await globalStore.updateOrderStatus(
+      globalStore.orderDetail?.uid,
+      newStatus
+    );
+
+    console.log(
+      `La orden ${globalStore.orderDetail?.id} ha sido actualizada a ${newStatus}`
+    );
+  } catch (error) {
+    console.error("Error al actualizar el estado de la orden:", error);
+  } finally {
+    isLoadingStatus.value = false;
+    await globalStore.getOrderDetail(globalStore.orderDetail?.uid ?? "");
+  }
 };
+
+const buttonLabel = computed(() => {
+  if (globalStore.orderDetail?.status === "started") {
+    return "Enviar Orden";
+  } else if (globalStore.orderDetail?.status === "delivered") {
+    return "Entregar Orden";
+  }
+  return "";
+});
+
+const buttonClass = computed(() => {
+  if (globalStore.orderDetail?.status === "started") {
+    return "btn-started";
+  } else if (globalStore.orderDetail?.status === "delivered") {
+    return "btn-delivered";
+  }
+  return "";
+});
+
+const emit = defineEmits(["close"]);
+
+const closeDrawer = () => {
+  emit("close");
+};
+
+onMounted(() => {
+  if (globalStore.orderDetail === null) {
+    onGetCurrentOrder();
+  }
+});
 </script>
 
 <style lang="postcss" scoped>
-.overlay {
-  @apply fixed inset-0 bg-[#c4ced89c] opacity-50 z-10;
-}
-
 .order-drawer {
   @apply h-full w-full flex flex-col gap-y-6 fixed right-0 top-0 z-10 bg-white shadow-lg;
   @apply md:w-[50%];
@@ -188,6 +297,10 @@ const close = () => {
 
 .total-grid {
   @apply grid grid-cols-[1fr_20px_100px];
+
+  div {
+    @apply flex justify-center ml-auto;
+  }
 }
 
 .rounded-dashes-total {
@@ -205,30 +318,18 @@ const close = () => {
 }
 
 .order-drawer__btn {
-  @apply py-2 w-full h-14 mt-8 bg-[#2D71F8] text-white rounded-lg hover:bg-blue-700 transition;
+  @apply py-2 w-full h-14 mt-8 font-semibold text-white rounded-lg  transition;
 }
 
-/* Transitions */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease-in-out;
+.btn-started {
+  @apply bg-[#2D71F8] hover:bg-blue-700;
 }
 
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
+.btn-delivered {
+  @apply bg-green-500 hover:bg-green-700;
 }
 
-.slide-in-enter-active,
-.slide-in-leave-active {
-  transition: transform 0.3s ease-in-out;
-}
-
-.slide-in-enter-from {
-  transform: translateX(100%);
-}
-
-.slide-in-leave-to {
-  transform: translateX(100%);
+.flex-skeleton {
+  @apply flex gap-2;
 }
 </style>
