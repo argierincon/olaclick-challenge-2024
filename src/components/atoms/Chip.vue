@@ -76,7 +76,7 @@ const removeChip = () => {
 }
 
 .small {
-  @apply px-3 py-[6px] text-xs;
+  @apply h-7 w-fit px-3 py-[6px] text-xs;
 }
 
 .medium {
