@@ -28,6 +28,7 @@ interface IProps {
 
 const props = withDefaults(defineProps<IProps>(), {
   isSnackVisible: false,
+  duration: 3000,
 });
 
 const isOverlayVisible = ref(false);
@@ -44,6 +45,10 @@ const show = () => {
   setTimeout(() => {
     isSnackVisible.value = true;
   }, 80);
+
+  setTimeout(() => {
+    closeSnack();
+  }, props.duration);
 };
 
 const emit = defineEmits(["close"]);
