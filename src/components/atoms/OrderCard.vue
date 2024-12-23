@@ -40,7 +40,7 @@ interface IItem {
 
 interface IProps {
   client: string;
-  orderId: string;
+  orderId: number;
   status: string;
   items: IItem[];
   total: number;
