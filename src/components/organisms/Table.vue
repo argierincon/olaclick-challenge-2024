@@ -33,7 +33,6 @@
             >
               <div class="data-cell">
                 <p v-if="name !== 'status'">
-                  <span v-if="name === 'total'">$</span>
                   {{ value }}
                 </p>
 
