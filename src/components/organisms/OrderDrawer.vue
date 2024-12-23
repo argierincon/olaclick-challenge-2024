@@ -242,7 +242,7 @@ onMounted(() => {
 
 <style lang="postcss" scoped>
 .order-drawer-section {
-  @apply h-full grid grid-rows-[100px_1fr_250px];
+  @apply h-full grid grid-rows-[100px_1fr_auto];
 }
 
 .order-drawer {
