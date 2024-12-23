@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-interface IProps {
+interface IItem {
   image: string;
   name: string;
   desc: string;
@@ -39,7 +39,11 @@ interface IProps {
   quantity: number;
 }
 
-defineProps<{ item: IProps }>();
+interface IProps {
+  item: IItem;
+}
+
+defineProps<IProps>();
 </script>
 
 <style lang="postcss" scoped>
