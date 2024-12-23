@@ -1,5 +1,12 @@
 <template>
   <aside class="sidebar">
+    <div class="searchbox">
+      <span>
+        <Icon name="Magnify" />
+      </span>
+      <input type="text" placeholder="Search..." class="focus:outline-none" />
+    </div>
+
     <SidebarItem
       v-for="item in items"
       :key="item.label"
@@ -49,6 +56,7 @@ import { useGlobalStore } from "../../store";
 
 import SidebarItem from "../atoms/SidebarItem.vue";
 import Tooltip from "../atoms/Tooltip.vue";
+import Icon from "../atoms/Icon.vue";
 
 const globalStore = useGlobalStore();
 
@@ -165,6 +173,14 @@ watch(route, (newRoute) => {
 
   span {
     @apply py-[2px] px-1 rounded-full bg-[#F7F7F7];
+  }
+}
+
+.searchbox {
+  @apply w-full h-14 p-4 flex items-center gap-2 rounded-lg bg-white;
+
+  span {
+    @apply flex p-3 bg-[#F7F7F7] rounded-full;
   }
 }
 </style>
