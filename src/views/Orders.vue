@@ -7,13 +7,13 @@
       <button @click="showSnack = true" class="open-modal-btn">
         Abrir Modal
       </button>
-      <OrderCardsSection />
+      <OrderCardsSection :ordersList="formatOrders" />
     </div>
 
     <Snackbar
       v-model:isSnackVisible="showSnack"
       message="Esta acción no se puede deshacer. ¿Deseas continuar?"
-      type="warning"
+      type="success"
       :duration="3000000"
       @close="onClose"
     />
@@ -76,6 +76,17 @@ const getOrdersData = () => {
   }
 };
 
+const getLastFinishedOrders = () => {
+  try {
+    isLoading.value = true;
+    globalStore.getRecentFinishedOrders();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
 const showSnack = ref(false);
 
 const onClose = () => {
@@ -90,8 +101,24 @@ watch(tablePage, () => {
   getOrdersData();
 });
 
+const formatOrders = computed(() => {
+  const orders = globalStore.lastFinishedOrders ?? [];
+
+  return orders.map((order) => ({
+    client: order.client,
+    orderId: order.id,
+    status: order.status,
+    total: order.total,
+    items: order.items.map((item) => ({
+      name: item.name,
+      quantity: item.quantity,
+    })),
+  }));
+});
+
 onMounted(() => {
   getOrdersData();
+  getLastFinishedOrders();
 });
 </script>
 
