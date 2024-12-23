@@ -90,13 +90,14 @@ const typeClass = computed(() => {
 <style lang="postcss" scoped>
 .overlay {
   @apply fixed inset-0 flex justify-center items-start pt-5;
-  /* @apply  bg-black bg-opacity-50; */
+  pointer-events: none;
 }
 
 .snackbar {
-  @apply w-80 p-4 pr-6  flex items-center justify-between;
+  @apply w-80 p-4 pr-6 flex items-center justify-between z-10;
   @apply rounded-lg font-medium text-white text-start;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
 }
 
 .snackbar-success {
