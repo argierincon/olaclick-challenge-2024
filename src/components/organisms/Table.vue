@@ -58,8 +58,8 @@
                 <slot />
                 <BtnTableActions
                   typeBtn="success"
-                  icon="Eye"
-                  @click="navigateToOrder(dataTable.uid)"
+                  :icon="loadingUid === dataTable.uid ? 'Spinner' : 'Eye'"
+                  @click="navigateToOrder(dataTable.uid, dataTable.id)"
                 />
               </div>
             </td>
@@ -67,9 +67,9 @@
         </tbody>
       </table>
     </div>
-
     <div class="responsive-table__pagination">
       <div class="pagination-buttons">
+        <!-- :class="tableTotal === 0 ? 'opacity-0' : ''" -->
         <BtnTableActions
           icon="ChevronLeft"
           :disabled="tablePage === 1"
@@ -113,32 +113,16 @@
       </div>
     </div>
 
-    <OrderDrawer
-      :visible="showOrderDrawer"
-      :orderId="currentOrder?.id"
-      :client="currentOrder?.client"
-      :status="currentOrder?.status"
-      :items="currentOrder?.items"
-      :discount="currentOrder?.discount"
-      :taxRate="currentOrder?.taxRate"
-      @update:visible="showOrderDrawer = $event"
-    />
+    <OrderDrawer :isDrawerVisible="showOrderDrawer" @close="closeDrawer" />
   </section>
 </template>
 
 <script setup lang="ts">
-import {
-  defineProps,
-  computed,
-  reactive,
-  ref,
-  toRefs,
-  onMounted,
-  watch,
-} from "vue";
+import { defineProps, computed, ref, toRefs, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getPaginationRange } from "../../utils/paginationDots";
 import { useGlobalStore } from "../../store";
+import { storeToRefs } from "pinia";
 import type { IOrder } from "../../store/interfaces/IOrders";
 
 import BtnTableActions from "../atoms/BtnTableActions.vue";
@@ -151,7 +135,6 @@ const router = useRouter();
 
 const globalStore = useGlobalStore();
 
-// Tipos
 interface ITotals {
   from: number;
   to: number;
@@ -223,20 +206,20 @@ const optPagination = [
   { label: "Mostrar 50", value: 50 },
 ];
 
-const tableTotals = reactive<ITotals>({
-  from: 0,
-  to: 0,
-  total: 0,
+const { tableLimit, tablePage, tableTotal } = storeToRefs(globalStore);
+const tableTotals = computed(() => {
+  const totals: ITotals = { from: 0, to: 0, total: 0 };
+  totals.from = tableLimit.value * tablePage.value - tableLimit.value + 1;
+  totals.to = Math.min(tableLimit.value * tablePage.value, tableTotal.value);
+  totals.total = tableTotal.value;
+
+  return totals;
 });
 
-const { tableLimit, tablePage, tableTotal } = globalStore;
-tableTotals.from = tableLimit * tablePage - tableLimit + 1;
-tableTotals.to = Math.min(tableLimit * tablePage, tableTotal);
-tableTotals.total = tableTotal;
-
-const totalButtons = ref<PaginationButton[]>([]);
-const totalPageCount = Math.ceil(tableTotal / tableLimit) || 0;
-totalButtons.value = getPaginationRange(totalPageCount, globalStore.tablePage);
+const totalButtons = computed(() => {
+  const totalPageCount = Math.ceil(tableTotal.value / tableLimit.value) || 0;
+  return getPaginationRange(totalPageCount, globalStore.tablePage);
+});
 
 // Métodos
 const changePage = (page: PaginationButton): void => {
@@ -245,87 +228,48 @@ const changePage = (page: PaginationButton): void => {
 };
 
 const selectLimit = (limit: number): void => {
-  console.log("limit", limit);
-
   globalStore.setLimit(limit);
 };
 
-const selectedOrderId = ref<string | null>(null);
-const showOrderDrawer = ref(false);
-
+const selectedOrderId = ref<number | null>(null);
 const currentOrder = ref<IOrder | null>(null);
 
-const navigateToOrder = async (orderUid: string) => {
-  console.log(`Order ID seleccionado: ${orderUid}`);
+const isLoading = ref(false);
+const loadingUid = ref<string | null>(null);
 
+const showOrderDrawer = ref(false);
+
+const navigateToOrder = async (orderUid: string, orderId: number) => {
   try {
+    loadingUid.value = orderUid;
     await globalStore.getOrderDetail(orderUid);
+
+    showOrderDrawer.value = true;
+
+    localStorage.setItem("currentOrderId", orderUid);
+    selectedOrderId.value = orderId;
 
     currentOrder.value = globalStore.orderDetail;
 
-    selectedOrderId.value = orderUid;
-    showOrderDrawer.value = true;
-
-    // router.push({ name: "OrderDetail", params: { id: String(orderId) } });
+    router.push({ name: "OrderDetail", params: { id: Number(orderId) } });
   } catch (error) {
     console.error("Error al obtener el detalle de la orden:", error);
+  } finally {
+    isLoading.value = false;
+    loadingUid.value = null;
   }
+};
+
+const closeDrawer = () => {
+  showOrderDrawer.value = false;
+  router.push("/");
 };
 
 onMounted(() => {
   if (route.params.id) {
-    // selectedOrderId.value = route.params.id;
-    showOrderDrawer.value = true;
+    selectedOrderId.value = Number(route.params.id);
   }
 });
-
-// watch(
-//   () => route.params.id,
-//   (newId) => {
-//     if (newId) {
-//       selectedOrderId.value = newId;
-//       showOrderDrawer.value = true;
-//     } else {
-//       selectedOrderId.value = null;
-//       showOrderDrawer.value = false;
-//     }
-//   }
-// );
-
-// const order = {
-//   uid: "1",
-//   id: 1,
-//   client: "Eloise",
-//   status: "started" as TStatus,
-//   items: [
-//     {
-//       name: "Beef Crowich",
-//       desc: "Emit event to notify parent to close the sidebar",
-//       price: 5.5,
-//       quantity: 1,
-//       image:
-//         "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
-//     },
-//     {
-//       name: "Sliced Black Forest",
-//       desc: "Emit event to notify parent to close the sidebar",
-//       price: 5.0,
-//       quantity: 2,
-//       image:
-//         "https://www.sugarplumbakery.org/wp-content/uploads/2022/05/A92A6026-2-1200x800.png",
-//     },
-//     {
-//       name: "Solo Floss Bread",
-//       desc: "Emit event to notify parent to close the sidebar",
-//       price: 4.5,
-//       quantity: 1,
-//       image:
-//         "https://crustabakes.wordpress.com/wp-content/uploads/2010/10/floss-bread-11.jpg",
-//     },
-//   ],
-//   discount: 2,
-//   taxRate: 0.1,
-// };
 </script>
 
 <style lang="postcss" scoped>
@@ -365,6 +309,11 @@ td:not([align]) {
   @apply flex justify-center text-base;
 }
 
+.table-wrapper {
+  @apply overflow-x-auto;
+  max-height: calc(100vh - 100px);
+}
+
 .table-wrapper td.hidden-id {
   @apply !hidden;
 }
@@ -378,7 +327,8 @@ td:not([align]) {
 }
 
 .responsive-table__pagination {
-  @apply mt-6 flex flex-col gap-y-6 lg:flex-row items-center justify-between;
+  @apply py-6 flex flex-col gap-y-6 lg:flex-row items-center justify-between;
+  @apply lg:sticky lg:bottom-0 lg:bg-white;
 }
 
 .page-navigation {
