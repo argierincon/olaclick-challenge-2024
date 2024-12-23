@@ -2,7 +2,7 @@
   <transition name="fade">
     <div v-show="isOverlayVisible" class="overlay" @click="handleOverlayClick">
       <transition name="slide-right">
-        <div v-if="isDrawerVisible" class="modal">
+        <div v-if="isDrawerVisible" class="modal" @click.stop>
           <slot></slot>
         </div>
       </transition>
