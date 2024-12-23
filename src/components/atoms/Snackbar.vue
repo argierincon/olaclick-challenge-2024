@@ -84,9 +84,34 @@ const typeClass = computed(() => {
 
 <style lang="postcss" scoped>
 .overlay {
-  @apply fixed inset-0 bg-black bg-opacity-50 flex items-end justify-center;
-  @apply lg:items-center;
-  z-index: 1000;
+  @apply fixed inset-0 flex justify-center items-start pt-5;
+  /* @apply  bg-black bg-opacity-50; */
+}
+
+.snackbar {
+  @apply w-80 p-4 pr-6  flex items-center justify-between;
+  @apply rounded-lg font-medium text-white text-start;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.snackbar-success {
+  background-color: #3ab54a;
+}
+
+.snackbar-warning {
+  background-color: #ebbe05;
+}
+
+.snackbar-error {
+  background-color: #f9346f;
+}
+
+.snackbar-info {
+  background-color: #008cff;
+}
+
+button {
+  @apply cursor-pointer text-xl;
 }
 
 /* TRANSITIONS STYLES */
@@ -118,34 +143,5 @@ const typeClass = computed(() => {
 .slide-down-enter-to,
 .slide-down-leave-from {
   @apply translate-y-0 opacity-100;
-}
-
-.snackbar {
-  /* ADD pos fixed */
-  @apply w-80 p-4 pr-6  flex items-center justify-between top-4;
-  @apply rounded-lg font-medium text-white text-start z-10;
-  right: 40%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: opacity 0.3s ease;
-}
-
-.snackbar-success {
-  background-color: #3ab54a;
-}
-
-.snackbar-warning {
-  background-color: #ebbe05;
-}
-
-.snackbar-error {
-  background-color: #f9346f;
-}
-
-.snackbar-info {
-  background-color: #008cff;
-}
-
-button {
-  @apply cursor-pointer text-xl;
 }
 </style>
