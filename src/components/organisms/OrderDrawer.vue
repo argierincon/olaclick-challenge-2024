@@ -127,9 +127,9 @@ const onGetCurrentOrder = async () => {
 
 const statusLabel = computed(() => {
   const statusMap: Record<TStatus, string> = {
-    started: "Iniciado",
-    delivered: "Enviado",
-    finished: "Entregado",
+    started: "Iniciada",
+    delivered: "Enviada",
+    finished: "Entregada",
   };
 
   const status = globalStore.orderDetail?.status;
