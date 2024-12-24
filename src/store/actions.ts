@@ -17,7 +17,10 @@ import { db } from "../services/firebase";
 
 import type { IOrder } from "./interfaces/IOrders";
 import type { IState } from "./state";
-import { generateOrder, generateRandomOrders } from "../services/orderSimulator";
+import {
+  generateOrder,
+  generateRandomOrders,
+} from "../services/orderSimulator";
 import type { TStatus } from "../interfaces/Orders";
 
 let updateLoopTimeout: any = null;
@@ -25,15 +28,27 @@ let updateLoopTimeout: any = null;
 export const actions = {
   async addSingleOrderToCollection() {
     try {
-      const order = generateOrder();
-
       const ordersCollection = collection(db, "orders");
 
-      const docRef = await addDoc(ordersCollection, order);
+      const q = query(ordersCollection, orderBy("id", "desc"), limit(1));
+      const querySnapshot = await getDocs(q);
+
+      let orderId = 1;
+
+      if (!querySnapshot.empty) {
+        const lastOrder = querySnapshot.docs[0].data();
+        orderId = lastOrder.id + 1;
+      }
+
+      const newOrder = generateOrder(null);
+      newOrder.id = orderId;
+
+      const docRef = await addDoc(ordersCollection, newOrder);
 
       console.log(`Orden creada con ID: ${docRef.id}`);
       return docRef.id;
     } catch (error) {
+      console.error("Error al crear la orden:", error);
       throw new Error("Failed to create a single order in Firestore");
     }
   },
@@ -41,15 +56,35 @@ export const actions = {
     try {
       let count = 0;
 
-      // Se llama hasta 5 veces en intervalos aleatorios entre 30 segundos y un minuto
+      // Consulta el último id en la colección de órdenes
+      const getLastOrderId = async () => {
+        const ordersCollection = collection(db, "orders");
+        const q = query(ordersCollection, orderBy("id", "desc"), limit(1));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          return 0;
+        } else {
+          const lastOrder = querySnapshot.docs[0].data();
+          return lastOrder.id;
+        }
+      };
+
       const generateNextOrder = async () => {
         if (count < 5) {
+          const lastOrderId = await getLastOrderId(); // Obtener el último id
           const orders = await generateRandomOrders();
-          // console.log(`Orden ${count + 1}:`, orders);
+
+          // id secuencial a cada orden
+          const updatedOrders = orders.map((order, index) => {
+            order.id = lastOrderId + index + 1;
+            return order;
+          });
+
           count++;
 
           const ordersCollection = collection(db, "orders");
-          const docRefs = orders.map((order) =>
+          const docRefs = updatedOrders.map((order) =>
             addDoc(ordersCollection, order)
           );
 
@@ -69,7 +104,6 @@ export const actions = {
       await generateNextOrder();
     } catch (error) {
       console.log(error);
-
       throw new Error("Failed to add order to Firestore");
     }
   },
