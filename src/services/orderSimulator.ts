@@ -209,12 +209,7 @@ const desserts = [
   },
 ];
 
-let currentOrderId = 1;
-
-export const generateOrder = () => {
-  // Generar un ID de orden secuencial
-  const orderId = currentOrderId++;
-
+export const generateOrder = (orderId: number | null) => {
   // Seleccionar un cliente aleatorio
   const randomClient = clients[Math.floor(Math.random() * clients.length)];
 
@@ -295,7 +290,7 @@ export const generateRandomOrders = async () => {
     new Promise((resolve) => setTimeout(resolve, ms));
 
   for (let i = 0; i < numOrders; i++) {
-    const order = generateOrder();
+    const order = generateOrder(null);
     orders.push(order);
 
     await delay(20);
