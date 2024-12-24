@@ -4,22 +4,22 @@
       <Skeleton width="64px" height="64px" borderRadius="10px" />
     </div>
 
-    <div>
-      <Skeleton width="140px" height="24px" />
-      <Skeleton width="240px" height="14px" class="mt-1" />
-      <Skeleton width="100px" height="14px" class="mt-1" />
+    <div class="w-full">
+      <Skeleton width="90%" height="14px" />
+      <Skeleton width="40%" height="14px" class="mt-1" />
+      <Skeleton width="20%" height="14px" class="mt-1" />
     </div>
 
     <div class="item-drawer__amounts">
-      <Skeleton width="60px" height="24px" />
+      <Skeleton width="60px" height="24px" class="ml-auto" />
     </div>
 
     <div class="item-drawer__amounts">
-      <Skeleton width="60px" height="24px" />
+      <Skeleton width="60px" height="24px" class="ml-auto" />
     </div>
 
     <div class="item-drawer__amounts font-semibold">
-      <Skeleton width="60px" height="24px" />
+      <Skeleton width="60px" height="24px" class="ml-auto" />
     </div>
   </div>
 </template>
@@ -52,7 +52,8 @@ import Skeleton from "./Skeleton.vue";
 }
 
 .item-drawer__amounts {
-  @apply grid grid-cols-[80px_1fr] w-36 self-end lg:self-auto lg:w-auto lg:block justify-self-center gap-x-4;
+  @apply w-36 self-end lg:self-auto lg:w-auto lg:block justify-self-center gap-x-4;
+  @apply lg:grid lg:grid-cols-[80px_1fr];
 
   p {
     @apply text-end;
