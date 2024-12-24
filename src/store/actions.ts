@@ -44,7 +44,7 @@ export const actions = {
       // Se llama hasta 5 veces en intervalos aleatorios entre 30 segundos y un minuto
       const generateNextOrder = async () => {
         if (count < 5) {
-          const orders = generateRandomOrders();
+          const orders = await generateRandomOrders();
           // console.log(`Orden ${count + 1}:`, orders);
           count++;
 
@@ -52,6 +52,7 @@ export const actions = {
           const docRefs = orders.map((order) =>
             addDoc(ordersCollection, order)
           );
+
           await Promise.all(docRefs);
 
           // Generar un intervalo aleatorio entre 30 y 60 segundos (30000 a 60000 ms)
@@ -138,7 +139,7 @@ export const actions = {
       throw new Error("Failed to update order status");
     }
   },
-  async updateOldestOrderStatus() {
+  async updateOldestOrderStatus(this: IState) {
     try {
       const ordersCollection = collection(db, "orders");
 
@@ -161,8 +162,23 @@ export const actions = {
         // Cambiar el estado de la orden
         if (order.status === "started") {
           newStatus = "delivered";
+
+          this.lastOrderUpdated = {
+            client: order.client,
+            id: order.id,
+            status: newStatus,
+          };
+
+          console.log("ORDEN ENVIADA", this.lastOrderUpdated);
         } else if (order.status === "delivered") {
           newStatus = "finished";
+
+          this.lastOrderUpdated = {
+            client: order.client,
+            id: order.id,
+            status: newStatus,
+          };
+          console.log("ORDEN ENTREGADA", this.lastOrderUpdated);
         } else {
           return false;
         }
