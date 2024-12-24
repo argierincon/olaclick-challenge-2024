@@ -89,8 +89,7 @@ const typeClass = computed(() => {
 
 <style lang="postcss" scoped>
 .overlay {
-  @apply fixed inset-0 flex justify-center items-start pt-5;
-  pointer-events: none;
+  @apply fixed inset-5 flex justify-end items-start pointer-events-none;
 }
 
 .snackbar {
