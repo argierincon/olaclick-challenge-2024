@@ -5,17 +5,29 @@
         <div class="header-info">
           <h4 class="flex-skeleton">
             Cliente:
-            <Skeleton v-if="isLoading" width="140px" height="28px" />
+            <Skeleton
+              v-if="isLoading || !globalStore.orderDetail"
+              width="140px"
+              height="28px"
+            />
             {{ globalStore.orderDetail?.client }}
           </h4>
           <p class="flex-skeleton">
             ID de la Orden:
-            <Skeleton v-if="isLoading" width="40px" height="16px" />
+            <Skeleton
+              v-if="isLoading || !globalStore.orderDetail"
+              width="40px"
+              height="16px"
+            />
             {{ globalStore.orderDetail?.id }}
           </p>
         </div>
 
-        <Skeleton v-if="isLoading" width="80px" height="36px" />
+        <Skeleton
+          v-if="isLoading || !globalStore.orderDetail"
+          width="80px"
+          height="36px"
+        />
         <Chip v-else :label="statusLabel" :type="statusType" :light="isLight" />
       </header>
 
@@ -27,8 +39,8 @@
           <p class="items-amounts">Total</p>
         </div>
 
-        <ItemDrawerSkeleton v-if="isLoading" />
-        <ItemDrawerSkeleton v-if="isLoading" />
+        <ItemDrawerSkeleton v-if="isLoading || !globalStore.orderDetail" />
+        <ItemDrawerSkeleton v-if="isLoading || !globalStore.orderDetail" />
         <ItemDrawer
           v-for="(item, index) in globalStore.orderDetail?.items"
           :key="index"
@@ -42,7 +54,11 @@
             <span class="text-sm">Subtotal</span>
             <span>$</span>
             <div>
-              <Skeleton v-if="isLoading" width="60px" height="26px" />
+              <Skeleton
+                v-if="isLoading || !globalStore.orderDetail"
+                width="60px"
+                height="26px"
+              />
               <span v-else>
                 {{ subtotal?.toFixed(2) }}
               </span>
@@ -53,7 +69,11 @@
             <span class="text-sm">Tax (10%)</span>
             <span>$</span>
             <div>
-              <Skeleton v-if="isLoading" width="60px" height="26px" />
+              <Skeleton
+                v-if="isLoading || !globalStore.orderDetail"
+                width="60px"
+                height="26px"
+              />
               <span v-else>{{ tax.toFixed(2) }}</span>
             </div>
           </div>
@@ -63,7 +83,11 @@
             <span>TOTAL</span>
             <span>$</span>
             <div>
-              <Skeleton v-if="isLoading" width="60px" height="26px" />
+              <Skeleton
+                v-if="isLoading || !globalStore.orderDetail"
+                width="60px"
+                height="26px"
+              />
               <span v-else>{{ total.toFixed(2) }}</span>
             </div>
           </div>
@@ -108,9 +132,9 @@ defineProps<IProps>();
 
 const isLoading = ref(false);
 
-const onGetCurrentOrder = async () => {
-  const orderUid = localStorage.getItem("currentOrderId");
+const orderUid = localStorage.getItem("currentOrderId");
 
+const onGetCurrentOrder = async () => {
   if (orderUid) {
     try {
       isLoading.value = true;
@@ -158,7 +182,7 @@ const isLight = computed(() => {
 });
 
 const subtotal = computed(() =>
-  globalStore.orderDetail?.items.reduce(
+  (globalStore.orderDetail?.items ?? []).reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   )
@@ -196,10 +220,6 @@ const markAsDelivered = async () => {
     await globalStore.updateOrderStatus(
       globalStore.orderDetail?.uid,
       newStatus
-    );
-
-    console.log(
-      `La orden ${globalStore.orderDetail?.id} ha sido actualizada a ${newStatus}`
     );
   } catch (error) {
     console.error("Error al actualizar el estado de la orden:", error);
