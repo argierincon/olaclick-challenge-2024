@@ -262,7 +262,7 @@ onMounted(() => {
 }
 
 .order-drawer__items {
-  @apply px-6 flex-grow overflow-y-auto;
+  @apply px-6 pb-6 flex-grow overflow-y-auto;
 }
 
 .items-header {
