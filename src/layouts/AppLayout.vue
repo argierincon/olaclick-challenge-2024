@@ -20,7 +20,7 @@ import Sidebar from "../components/organisms/Sidebar.vue";
 const isSidebarVisible = ref(true);
 
 const onOpenSidebar = (newVisibility: boolean) => {
-  isSidebarVisible.value = newVisibility;
+  isSidebarVisible.value = !newVisibility;
 };
 </script>
 
