@@ -27,6 +27,7 @@ const skeletonClasses = computed(() => [
 const skeletonStyle = computed(() => ({
   width: props.width,
   height: props.height,
+  "border-radius": props.borderRadius,
 }));
 </script>
 
