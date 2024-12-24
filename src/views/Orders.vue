@@ -119,8 +119,6 @@ const dataSnack = computed(() => {
 
   const lastOrder = globalStore.lastOrderUpdated;
 
-  console.log(lastOrder?.status);
-
   if (!lastOrder) {
     showSnack.value = false;
   } else {
