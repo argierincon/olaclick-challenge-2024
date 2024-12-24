@@ -66,7 +66,7 @@ watch(
 
 <style lang="postcss" scoped>
 .overlay {
-  @apply fixed inset-0 bg-[#c4ced861] flex items-end justify-center;
+  @apply fixed inset-0 bg-[#c4ced861] flex items-end justify-center z-10;
   @apply lg:items-center;
 }
 
