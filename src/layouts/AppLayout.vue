@@ -17,7 +17,7 @@ import { ref } from "vue";
 import Header from "../components/organisms/Header.vue";
 import Sidebar from "../components/organisms/Sidebar.vue";
 
-const isSidebarVisible = ref(false);
+const isSidebarVisible = ref(true);
 
 const onOpenSidebar = (newVisibility: boolean) => {
   isSidebarVisible.value = newVisibility;
@@ -35,7 +35,6 @@ const onOpenSidebar = (newVisibility: boolean) => {
 }
 
 .layout__sidebar {
-  /* @apply absolute top-0; */
   @apply md:col-span-1 md:row-span-2;
 }
 

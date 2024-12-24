@@ -1,6 +1,6 @@
 <template>
-  <transition name="slide-left">
-    <aside v-if="isSidebarVisible" class="sidebar">
+  <SidebarTransition :isSidebarVisible="isSidebarVisible">
+    <aside class="sidebar">
       <div class="searchbox">
         <span>
           <Icon name="Magnify" />
@@ -48,7 +48,7 @@
         </div>
       </section>
     </aside>
-  </transition>
+  </SidebarTransition>
 </template>
 
 <script setup lang="ts">
@@ -59,6 +59,7 @@ import { useGlobalStore } from "../../store";
 import SidebarItem from "../atoms/SidebarItem.vue";
 import Tooltip from "../atoms/Tooltip.vue";
 import Icon from "../atoms/Icon.vue";
+import SidebarTransition from "../atoms/SidebarTransition.vue";
 
 const globalStore = useGlobalStore();
 
@@ -97,6 +98,12 @@ const items = [
 const route = useRoute();
 const currentRoute = ref(route.path);
 
+const emit = defineEmits(["close"]);
+
+const closeSidebar = () => {
+  emit("close");
+};
+
 const onCreateOrders = async () => {
   try {
     await globalStore.addOrdersToCollection();
@@ -128,8 +135,6 @@ const handleSidebarItemClick = (item: {
 }) => {
   if (item.action) {
     item.action();
-  } else {
-    console.log(`${item.label} clickeado, pero no tiene acción definida.`);
   }
 };
 
@@ -172,32 +177,10 @@ watch(route, (newRoute) => {
 }
 
 .searchbox {
-  @apply w-full h-14 p-4 flex items-center gap-2 rounded-lg bg-white;
+  @apply w-full h-14 p-4 flex items-center gap-2 rounded-xl bg-white;
 
   span {
     @apply flex p-3 bg-[#F7F7F7] rounded-full;
   }
-}
-
-/* slide-left */
-.slide-left-enter-active,
-.slide-left-leave-active {
-  transition: transform 0.3s ease-in-out;
-}
-
-.slide-left-enter-from {
-  transform: translateX(-100%);
-}
-
-.slide-left-enter-to {
-  transform: translateX(0);
-}
-
-.slide-left-leave-from {
-  transform: translateX(0);
-}
-
-.slide-left-leave-to {
-  transform: translateX(-100%);
 }
 </style>
