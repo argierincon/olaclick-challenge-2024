@@ -60,12 +60,6 @@ const emit = defineEmits(["toggle-sidebar"]);
 const onOpenCloseSidebar = () => {
   isSidebarVisible.value = !isSidebarVisible.value;
 
-  console.log(
-    "CLICK HEADER SIDEBAR",
-    isSidebarVisible.value ? "OPEN" : "CLOSE"
-  );
-
-  // Emitir el evento al layout
   emit("toggle-sidebar", isSidebarVisible.value);
 };
 
