@@ -268,10 +268,8 @@ watch(
   () => route.name,
   (newName) => {
     if (newName === "OrderDetail") {
-      console.log("Se abrió la ruta OrderDetail con id:", route.params.id);
       showOrderDrawer.value = true;
     } else {
-      console.log("Se cerró la ruta OrderDetail");
       showOrderDrawer.value = false;
     }
   }
