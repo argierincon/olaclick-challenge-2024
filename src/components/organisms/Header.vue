@@ -43,12 +43,6 @@
   </header>
 </template>
 
-<style lang="postcss" scoped>
-.header {
-  @apply pt-4 px-4 flex items-center justify-between;
-}
-</style>
-
 <script setup lang="ts">
 import { useGlobalStore } from "../../store";
 import Icon from "../atoms/Icon.vue";
@@ -129,7 +123,8 @@ onUnmounted(() => {
 
 <style lang="postcss" scoped>
 .header {
-  @apply flex items-center justify-between;
+  @apply pt-4 px-4 flex flex-col gap-4;
+  @apply md:flex-row md:items-center md:justify-between;
 }
 
 .header__content {
@@ -145,10 +140,12 @@ onUnmounted(() => {
 }
 
 .header__details {
-  @apply flex items-center gap-4;
+  @apply flex flex-col gap-4;
+  @apply md:flex-row;
 
   .detail {
-    @apply flex items-center gap-3 py-2 px-3 rounded-full bg-white font-medium;
+    @apply py-2 px-3 flex items-center justify-center gap-3;
+    @apply rounded-full bg-white font-medium;
 
     p {
       @apply text-sm;
