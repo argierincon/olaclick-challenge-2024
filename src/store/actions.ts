@@ -22,6 +22,7 @@ import {
   generateRandomOrders,
 } from "../services/orderSimulator";
 import type { TStatus } from "../interfaces/Orders";
+import { useGlobalStore } from ".";
 
 let updateLoopTimeout: any = null;
 
@@ -224,9 +225,10 @@ export const actions = {
   },
   async startUpdatingOldOrders() {
     const interval = 3500;
+    const store = useGlobalStore();
 
     const updateLoop = async () => {
-      const hasUpdated = await actions.updateOldestOrderStatus();
+      const hasUpdated = await store.updateOldestOrderStatus();
 
       if (hasUpdated) {
         updateLoopTimeout = setTimeout(updateLoop, interval);
