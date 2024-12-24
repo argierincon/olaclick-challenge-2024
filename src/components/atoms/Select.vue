@@ -99,7 +99,7 @@ const selectClass = computed(() => ({
 
   &::after {
     @apply absolute w-5 h-5 block;
-    @apply z-10 origin-center pointer-events-none;
+    @apply z-[1] origin-center pointer-events-none;
   }
 
   &.large,
