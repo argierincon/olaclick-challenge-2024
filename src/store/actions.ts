@@ -26,7 +26,7 @@ import type { TStatus } from "../interfaces/Orders";
 let updateLoopTimeout: any = null;
 
 export const actions = {
-  async addSingleOrderToCollection() {
+  async addSingleOrderToCollection(this: IState) {
     try {
       const ordersCollection = collection(db, "orders");
 
@@ -45,7 +45,12 @@ export const actions = {
 
       const docRef = await addDoc(ordersCollection, newOrder);
 
-      console.log(`Orden creada con ID: ${docRef.id}`);
+      this.newOrder = {
+        client: newOrder.client,
+        id: newOrder.id,
+      };
+
+      // console.log(`Orden creada con ID: ${docRef.id}`);
       return docRef.id;
     } catch (error) {
       console.error("Error al crear la orden:", error);
@@ -167,7 +172,7 @@ export const actions = {
         status: newStatus,
       });
 
-      console.log(`Order ${uid} status updated to ${newStatus}`);
+      // console.log(`Order ${uid} status updated to ${newStatus}`);
     } catch (error) {
       console.log("Error updating order status:", error);
       throw new Error("Failed to update order status");
