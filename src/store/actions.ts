@@ -17,7 +17,7 @@ import { db } from "../services/firebase";
 
 import type { IOrder } from "./interfaces/IOrders";
 import type { IState } from "./state";
-import { generateOrder, generateRandomOrders } from "../services/menu";
+import { generateOrder, generateRandomOrders } from "../services/orderSimulator";
 import type { TStatus } from "../interfaces/Orders";
 
 let updateLoopTimeout: any = null;
