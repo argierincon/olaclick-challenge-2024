@@ -26,7 +26,7 @@ const onOpenSidebar = (newVisibility: boolean) => {
 
 <style lang="postcss" scoped>
 .layout {
-  @apply h-screen relative;
+  @apply p-4 h-screen;
   @apply md:grid md:grid-rows-[80px,1fr] md:grid-cols-[300px_1fr];
 }
 
