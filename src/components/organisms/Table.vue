@@ -39,13 +39,13 @@
                 <div v-if="name === 'status'">
                   <Chip
                     v-if="dataTable.status === 'started'"
-                    label="Iniciado"
+                    label="Iniciada"
                     type="info"
                     light
                   />
                   <Chip
                     v-if="dataTable.status === 'delivered'"
-                    label="Enviado"
+                    label="Enviada"
                     type="success"
                     light
                   />
