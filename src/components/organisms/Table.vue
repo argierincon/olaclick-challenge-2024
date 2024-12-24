@@ -231,7 +231,6 @@ const selectLimit = (limit: number): void => {
 };
 
 const selectedOrderId = ref<number | null>(null);
-const currentOrder = ref<IOrder | null>(null);
 
 const isLoading = ref(false);
 const loadingUid = ref<string | null>(null);
@@ -247,8 +246,6 @@ const navigateToOrder = async (orderUid: string, orderId: number) => {
 
     localStorage.setItem("currentOrderId", orderUid);
     selectedOrderId.value = orderId;
-
-    currentOrder.value = globalStore.orderDetail;
 
     router.push({ name: "OrderDetail", params: { id: Number(orderId) } });
   } catch (error) {
