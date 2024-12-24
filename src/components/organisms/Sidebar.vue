@@ -80,11 +80,6 @@ const items = [
     action: () => onStopUpdateOldestOrderStatus(),
   },
   {
-    label: "Crear una orden",
-    tooltipText: "Genera una unica orden en el sistema.",
-    action: () => onCreateSingleOrder(),
-  },
-  {
     label: "Órdenes",
     path: "/orders",
     tooltipText: "",
@@ -114,14 +109,6 @@ const onUpdateOldestOrderStatus = async () => {
 const onStopUpdateOldestOrderStatus = async () => {
   try {
     await globalStore.stopUpdatingOldOrders();
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const onCreateSingleOrder = async () => {
-  try {
-    await globalStore.addSingleOrderToCollection();
   } catch (error) {
     console.error(error);
   }
