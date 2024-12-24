@@ -93,7 +93,7 @@ const typeClass = computed(() => {
 }
 
 .snackbar {
-  @apply w-80 p-4 pr-6 flex items-center justify-between z-10;
+  @apply w-80 p-4 flex items-center gap-3 justify-between z-10;
   @apply rounded-lg font-medium text-white text-start;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   pointer-events: auto;
