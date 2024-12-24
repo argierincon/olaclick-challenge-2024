@@ -117,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, ref, toRefs, onMounted } from "vue";
+import { defineProps, computed, ref, toRefs, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getPaginationRange } from "../../utils/paginationDots";
 import { useGlobalStore } from "../../store";
@@ -263,6 +263,19 @@ const closeDrawer = () => {
   showOrderDrawer.value = false;
   router.push("/");
 };
+
+watch(
+  () => route.name,
+  (newName) => {
+    if (newName === "OrderDetail") {
+      console.log("Se abrió la ruta OrderDetail con id:", route.params.id);
+      showOrderDrawer.value = true;
+    } else {
+      console.log("Se cerró la ruta OrderDetail");
+      showOrderDrawer.value = false;
+    }
+  }
+);
 
 onMounted(() => {
   if (route.params.id) {
