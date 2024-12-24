@@ -98,12 +98,6 @@ const items = [
 const route = useRoute();
 const currentRoute = ref(route.path);
 
-const emit = defineEmits(["close"]);
-
-const closeSidebar = () => {
-  emit("close");
-};
-
 const onCreateOrders = async () => {
   try {
     await globalStore.addOrdersToCollection();
