@@ -4,17 +4,14 @@
       <Table :tableData="cleanedData" />
     </div>
     <div class="order-cards-section">
-      <button @click="showSnack = true" class="open-modal-btn">
-        Abrir Modal
-      </button>
       <OrderCardsSection :ordersList="formatOrders" />
     </div>
 
     <Snackbar
       v-model:isSnackVisible="showSnack"
-      message="Esta acción no se puede deshacer. ¿Deseas continuar?"
-      type="success"
-      :duration="3000000"
+      :message="dataSnack.msg"
+      :type="dataSnack.type"
+      :duration="3000"
       @close="onClose"
     />
   </section>
@@ -116,9 +113,32 @@ const formatOrders = computed(() => {
   }));
 });
 
+const dataSnack = computed(() => {
+  let snackData = { msg: "", type: "" };
+
+  const lastOrder = globalStore.lastOrderUpdated;
+
+  if (!lastOrder) {
+    showSnack.value = false;
+  } else {
+    showSnack.value = true;
+    const statusMessage =
+      lastOrder.status === "delivered" ? "Enviada" : "Entregada";
+    const type = lastOrder.status === "delivered" ? "info" : "success";
+
+    snackData = {
+      msg: `La orden id ${lastOrder.id} del cliente ${lastOrder.client} ha sido ${statusMessage}`,
+      type,
+    };
+  }
+
+  return snackData;
+});
+
 onMounted(() => {
   getOrdersData();
   getLastFinishedOrders();
+  globalStore.listenToOrderUpdates();
 });
 </script>
 
