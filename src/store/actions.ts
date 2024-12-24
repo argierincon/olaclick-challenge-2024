@@ -218,7 +218,7 @@ export const actions = {
     }
   },
   async startUpdatingOldOrders() {
-    const interval = 3000;
+    const interval = 3500;
 
     const updateLoop = async () => {
       const hasUpdated = await actions.updateOldestOrderStatus();
@@ -267,27 +267,36 @@ export const actions = {
     );
 
     onSnapshot(q, (querySnapshot) => {
+      let newStatus: string;
       if (!querySnapshot.empty) {
         const doc = querySnapshot.docs[0];
         const order = doc.data();
 
-        let newStatus: string;
-
-        if (order.status === "started") {
+        if (
+          order.status === "started" &&
+          this.lastOrderUpdated?.status === "delivered"
+        ) {
+          newStatus = "finished";
+          this.lastOrderUpdated = {
+            client: this.lastOrderUpdated?.client || "",
+            id: this.lastOrderUpdated?.id || 0,
+            status: newStatus,
+          };
+        } else if (order.status === "delivered") {
           newStatus = "delivered";
           this.lastOrderUpdated = {
             client: order.client,
             id: order.id,
             status: newStatus,
           };
-        } else if (order.status === "delivered") {
-          newStatus = "finished";
-          this.lastOrderUpdated = {
-            client: order.client,
-            id: order.id,
-            status: newStatus,
-          };
         }
+      } else if (this.lastOrderUpdated?.status === "delivered") {
+        newStatus = "finished";
+        this.lastOrderUpdated = {
+          client: this.lastOrderUpdated?.client || "",
+          id: this.lastOrderUpdated?.id || 0,
+          status: newStatus,
+        };
       }
     });
   },
