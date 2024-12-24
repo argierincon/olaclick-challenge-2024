@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
-    <Header />
-    <Sidebar />
+    <Header class="layout__header" />
+    <Sidebar class="layout__sidebar" />
     <main class="content">
       <router-view v-slot="{ Component }">
         <transition name="slide" mode="out-in">
@@ -19,20 +19,15 @@ import Sidebar from "../components/organisms/Sidebar.vue";
 
 <style lang="postcss" scoped>
 .layout {
-  display: grid;
-  grid-template-rows: 80px 1fr;
-  grid-template-columns: 300px 1fr;
-  height: 100vh;
+  @apply md:grid grid-rows-[80px,1fr] grid-cols-[300px_1fr] h-screen;
 }
 
-.layout > Header {
-  grid-column: span 2;
-  grid-row: 1;
+.layout__header {
+  @apply md:row-start-1 md:col-span-2;
 }
 
-.layout > Sidebar {
-  grid-column: 1;
-  grid-row: 2;
+.layout__sidebar {
+  @apply md:col-span-1 md:row-span-2;
 }
 
 .content {
