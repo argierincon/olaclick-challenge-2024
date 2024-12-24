@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <div class="header__content">
-      <button>
+      <button @click="onOpenCloseSidebar">
         <Icon name="MenuBurger" />
       </button>
 
@@ -9,18 +9,20 @@
     </div>
 
     <div class="header__details">
-      <div class="detail detail--time">
-        <p>{{ formattedDate }}</p>
-        <span>
-          <Icon name="Calendar" class="text-blue-600" />
-        </span>
-      </div>
+      <div class="flex gap-2">
+        <div class="detail detail--time">
+          <p>{{ formattedDate }}</p>
+          <span>
+            <Icon name="Calendar" class="text-blue-600" />
+          </span>
+        </div>
 
-      <div class="detail detail--time">
-        <p>{{ formattedTime }}</p>
-        <span>
-          <Icon name="Clock" />
-        </span>
+        <div class="detail detail--time">
+          <p>{{ formattedTime }}</p>
+          <span>
+            <Icon name="Clock" />
+          </span>
+        </div>
       </div>
 
       <div class="detail detail--order" @click="onCreateSingleOrder">
@@ -44,13 +46,28 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useGlobalStore } from "../../store";
 import Icon from "../atoms/Icon.vue";
-
-import { computed, onMounted, onUnmounted, ref } from "vue";
 import Snackbar from "../atoms/Snackbar.vue";
 
 const globalStore = useGlobalStore();
+
+const isSidebarVisible = ref(false);
+
+const emit = defineEmits(["toggle-sidebar"]);
+
+const onOpenCloseSidebar = () => {
+  isSidebarVisible.value = !isSidebarVisible.value;
+
+  console.log(
+    "CLICK HEADER SIDEBAR",
+    isSidebarVisible.value ? "OPEN" : "CLOSE"
+  );
+
+  // Emitir el evento al layout
+  emit("toggle-sidebar", isSidebarVisible.value);
+};
 
 const getFormattedDate = () => {
   const date = new Date();

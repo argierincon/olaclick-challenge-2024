@@ -1,52 +1,54 @@
 <template>
-  <aside class="sidebar">
-    <div class="searchbox">
-      <span>
-        <Icon name="Magnify" />
-      </span>
-      <input type="text" placeholder="Search..." class="focus:outline-none" />
-    </div>
+  <transition name="slide-left">
+    <aside v-if="isSidebarVisible" class="sidebar">
+      <div class="searchbox">
+        <span>
+          <Icon name="Magnify" />
+        </span>
+        <input type="text" placeholder="Search..." class="focus:outline-none" />
+      </div>
 
-    <SidebarItem
-      v-for="item in items"
-      :key="item.label"
-      :path="item.path"
-      :currentRoute="currentRoute"
-      :isActive="
-        item.label === 'Órdenes' && currentRoute.startsWith(item.path ?? '')
-      "
-      class="sidebar__item"
-      @click="handleSidebarItemClick(item)"
-    >
-      <span>
-        {{ item.label }}
-      </span>
+      <SidebarItem
+        v-for="item in items"
+        :key="item.label"
+        :path="item.path"
+        :currentRoute="currentRoute"
+        :isActive="
+          item.label === 'Órdenes' && currentRoute.startsWith(item.path ?? '')
+        "
+        class="sidebar__item"
+        @click="handleSidebarItemClick(item)"
+      >
+        <span>
+          {{ item.label }}
+        </span>
 
-      <Tooltip v-if="item.label !== 'Órdenes'">
-        {{ item.tooltipText }}
-      </Tooltip>
-    </SidebarItem>
+        <Tooltip v-if="item.label !== 'Órdenes'">
+          {{ item.tooltipText }}
+        </Tooltip>
+      </SidebarItem>
 
-    <section class="sidebar__mkt">
-      <div>
-        <div class="flex items-center gap-x-3">
-          <p class="brand-name">DeliHouse</p>
-          <span class="h-[5px] w-[5px] bg-[#2e71f9] rounded-full"></span>
-          <p class="text-gray-400 text-sm">Pos System</p>
+      <section class="sidebar__mkt">
+        <div>
+          <div class="flex items-center gap-x-3">
+            <p class="brand-name">DeliHouse</p>
+            <span class="h-[5px] w-[5px] bg-[#2e71f9] rounded-full"></span>
+            <p class="text-gray-400 text-sm">Pos System</p>
+          </div>
+          <p class="slogan">
+            El sabor de ensueño y la magia de sabores deliciosos.
+          </p>
         </div>
-        <p class="slogan">
-          El sabor de ensueño y la magia de sabores deliciosos.
-        </p>
-      </div>
 
-      <div class="copyright">
-        <p>
-          <span>©</span>
-          2024, Argie's Projects
-        </p>
-      </div>
-    </section>
-  </aside>
+        <div class="copyright">
+          <p>
+            <span>©</span>
+            2024, Argie's Projects
+          </p>
+        </div>
+      </section>
+    </aside>
+  </transition>
 </template>
 
 <script setup lang="ts">
@@ -59,6 +61,11 @@ import Tooltip from "../atoms/Tooltip.vue";
 import Icon from "../atoms/Icon.vue";
 
 const globalStore = useGlobalStore();
+
+interface IProps {
+  isSidebarVisible: boolean;
+}
+defineProps<IProps>();
 
 const items = [
   {
@@ -170,5 +177,27 @@ watch(route, (newRoute) => {
   span {
     @apply flex p-3 bg-[#F7F7F7] rounded-full;
   }
+}
+
+/* slide-left */
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: transform 0.3s ease-in-out;
+}
+
+.slide-left-enter-from {
+  transform: translateX(-100%);
+}
+
+.slide-left-enter-to {
+  transform: translateX(0);
+}
+
+.slide-left-leave-from {
+  transform: translateX(0);
+}
+
+.slide-left-leave-to {
+  transform: translateX(-100%);
 }
 </style>
