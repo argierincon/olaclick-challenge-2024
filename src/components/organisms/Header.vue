@@ -44,7 +44,7 @@
 import { useGlobalStore } from "../../store";
 import Icon from "../atoms/Icon.vue";
 
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 const globalStore = useGlobalStore();
 
@@ -76,6 +76,18 @@ const getFormattedTime = () => {
 };
 
 const formattedTime = ref(getFormattedTime());
+
+let intervalId: ReturnType<typeof setInterval>;
+
+onMounted(() => {
+  intervalId = setInterval(() => {
+    formattedTime.value = getFormattedTime();
+  }, 1000);
+});
+
+onUnmounted(() => {
+  clearInterval(intervalId);
+});
 
 const onCreateSingleOrder = async () => {
   try {
