@@ -27,10 +27,19 @@
         <div class="small-circle"></div>
         <p>Crear una orden</p>
         <span>
-          <Icon name="Plus" />
+          <Icon v-if="isLoading" name="Spinner" />
+          <Icon v-else name="Plus" />
         </span>
       </div>
     </div>
+
+    <Snackbar
+      v-model:isSnackVisible="showSnack"
+      :message="snackbarMsg"
+      type="info"
+      :duration="3000"
+      @close="onClose"
+    />
   </header>
 </template>
 
@@ -44,7 +53,8 @@
 import { useGlobalStore } from "../../store";
 import Icon from "../atoms/Icon.vue";
 
-import { onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import Snackbar from "../atoms/Snackbar.vue";
 
 const globalStore = useGlobalStore();
 
@@ -79,6 +89,33 @@ const formattedTime = ref(getFormattedTime());
 
 let intervalId: ReturnType<typeof setInterval>;
 
+const showSnack = ref(false);
+
+const onClose = () => {
+  showSnack.value = false;
+};
+
+const snackbarMsg = computed(() => {
+  if (globalStore.newOrder) {
+    showSnack.value = true;
+    return `Se ha creado la orden ID: ${globalStore.newOrder.id} del cliente ${globalStore.newOrder.client}`;
+  }
+  return "";
+});
+
+const isLoading = ref<boolean>(false);
+
+const onCreateSingleOrder = async () => {
+  try {
+    isLoading.value = true;
+    await globalStore.addSingleOrderToCollection();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
 onMounted(() => {
   intervalId = setInterval(() => {
     formattedTime.value = getFormattedTime();
@@ -88,14 +125,6 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(intervalId);
 });
-
-const onCreateSingleOrder = async () => {
-  try {
-    await globalStore.addSingleOrderToCollection();
-  } catch (error) {
-    console.error(error);
-  }
-};
 </script>
 
 <style lang="postcss" scoped>
