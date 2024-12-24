@@ -101,6 +101,7 @@ const onCreateOrders = async () => {
 const onUpdateOldestOrderStatus = async () => {
   try {
     await globalStore.startUpdatingOldOrders();
+    globalStore.listenToOrderUpdates();
   } catch (error) {
     console.error(error);
   }
