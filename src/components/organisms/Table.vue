@@ -122,7 +122,6 @@ import { useRoute, useRouter } from "vue-router";
 import { getPaginationRange } from "../../utils/paginationDots";
 import { useGlobalStore } from "../../store";
 import { storeToRefs } from "pinia";
-import type { IOrder } from "../../store/interfaces/IOrders";
 
 import BtnTableActions from "../atoms/BtnTableActions.vue";
 import Chip from "../atoms/Chip.vue";
@@ -273,9 +272,9 @@ watch(
 );
 
 onMounted(() => {
-  if (route.params.id) {
-    selectedOrderId.value = Number(route.params.id);
-  }
+  // if (route.params.id) {
+  //   selectedOrderId.value = Number(route.params.id);
+  // }
 });
 </script>
 
