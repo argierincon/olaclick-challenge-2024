@@ -103,6 +103,7 @@ const formatOrders = computed(() => {
 
   return orders.map((order) => ({
     client: order.client,
+    uid: order.uid,
     orderId: order.id,
     status: order.status,
     total: order.total,
