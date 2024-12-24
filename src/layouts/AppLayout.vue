@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
-    <Header class="layout__header" />
-    <Sidebar class="layout__sidebar" />
+    <Header class="layout__header" @toggle-sidebar="onOpenSidebar" />
+    <Sidebar :isSidebarVisible="isSidebarVisible" class="layout__sidebar" />
     <main class="content">
       <router-view v-slot="{ Component }">
         <transition name="slide" mode="out-in">
@@ -13,8 +13,15 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import Header from "../components/organisms/Header.vue";
 import Sidebar from "../components/organisms/Sidebar.vue";
+
+const isSidebarVisible = ref(false);
+
+const onOpenSidebar = (newVisibility: boolean) => {
+  isSidebarVisible.value = newVisibility;
+};
 </script>
 
 <style lang="postcss" scoped>
