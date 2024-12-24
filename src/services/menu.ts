@@ -285,17 +285,20 @@ export const generateOrder = () => {
   return order;
 };
 
-// Se llama entre 1 y 20 veces de manera aleatoria
-export const generateRandomOrders = () => {
+export const generateRandomOrders = async () => {
   // Generar un número aleatorio entre 1 y 20
   const numOrders = Math.floor(Math.random() * 20) + 1;
 
-  const orders = [];
+  const orders: any[] = [];
 
-  // Llamar a generateOrder numOrders veces
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
   for (let i = 0; i < numOrders; i++) {
-    const order = generateOrder(); // Llamamos a la función para generar una orden
-    orders.push(order); // Añadimos la orden generada al arreglo
+    const order = generateOrder();
+    orders.push(order);
+
+    await delay(20);
   }
 
   return orders;
