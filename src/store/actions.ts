@@ -196,23 +196,8 @@ export const actions = {
         // Cambiar el estado de la orden
         if (order.status === "started") {
           newStatus = "delivered";
-
-          this.lastOrderUpdated = {
-            client: order.client,
-            id: order.id,
-            status: newStatus,
-          };
-
-          console.log("ORDEN ENVIADA", this.lastOrderUpdated);
         } else if (order.status === "delivered") {
           newStatus = "finished";
-
-          this.lastOrderUpdated = {
-            client: order.client,
-            id: order.id,
-            status: newStatus,
-          };
-          console.log("ORDEN ENTREGADA", this.lastOrderUpdated);
         } else {
           return false;
         }
@@ -270,6 +255,41 @@ export const actions = {
     } catch (error) {
       throw new Error("Failed to fetch recent finished orders");
     }
+  },
+  listenToOrderUpdates(this: IState) {
+    const ordersCollection = collection(db, "orders");
+
+    const q = query(
+      ordersCollection,
+      where("status", "in", ["started", "delivered"]),
+      orderBy("time"),
+      limit(1)
+    );
+
+    onSnapshot(q, (querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        const order = doc.data();
+
+        let newStatus: string;
+
+        if (order.status === "started") {
+          newStatus = "delivered";
+          this.lastOrderUpdated = {
+            client: order.client,
+            id: order.id,
+            status: newStatus,
+          };
+        } else if (order.status === "delivered") {
+          newStatus = "finished";
+          this.lastOrderUpdated = {
+            client: order.client,
+            id: order.id,
+            status: newStatus,
+          };
+        }
+      }
+    });
   },
   stopUpdatingOldOrders() {
     if (updateLoopTimeout) {
