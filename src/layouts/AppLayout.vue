@@ -19,7 +19,8 @@ import Sidebar from "../components/organisms/Sidebar.vue";
 
 <style lang="postcss" scoped>
 .layout {
-  @apply md:grid grid-rows-[80px,1fr] grid-cols-[300px_1fr] h-screen;
+  @apply h-screen relative;
+  @apply md:grid md:grid-rows-[80px,1fr] md:grid-cols-[300px_1fr];
 }
 
 .layout__header {
@@ -27,6 +28,7 @@ import Sidebar from "../components/organisms/Sidebar.vue";
 }
 
 .layout__sidebar {
+  /* @apply absolute top-0; */
   @apply md:col-span-1 md:row-span-2;
 }
 
