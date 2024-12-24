@@ -31,7 +31,7 @@ const navigate = () => {
 
 <style lang="postcss" scoped>
 .nav-button {
-  @apply w-full p-4 rounded-lg bg-white text-left;
+  @apply w-full p-4 rounded-xl bg-white text-left;
   @apply hover:bg-blue-50 hover:text-blue-700 transition-all duration-200;
 
   &.active {
