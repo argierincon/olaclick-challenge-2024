@@ -60,6 +60,11 @@ const visibleItems = computed(() => items.value.slice(0, 4));
 <style lang="postcss" scoped>
 .order-card {
   @apply min-w-56 min-h-56 max-w-56 max-h-56 p-4 grid grid-rows-[50px_2px_auto] gap-1 bg-white border rounded-xl shadow-sm;
+  @apply transition-all duration-500 ease-in-out;
+  &:hover {
+    @apply bg-[#f7faff];
+    @apply transition-all duration-500 ease-in-out;
+  }
 }
 
 .order-card__header {

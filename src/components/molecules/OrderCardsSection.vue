@@ -8,20 +8,31 @@
       <OrderCard
         v-else
         v-for="(order, index) in ordersList"
+        class="cursor-pointer"
         :key="index"
         :client="order.client"
         :orderId="order.orderId"
         :status="order.status"
         :items="order.items"
         :total="order.total"
+        @click="navigateToOrder(order.uid, order.orderId)"
       />
     </div>
+    <OrderDrawer :isDrawerVisible="showOrderDrawer" @close="closeDrawer" />
   </section>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
+import { defineProps, ref, watch } from "vue";
+import { useGlobalStore } from "../../store";
+import { useRoute, useRouter } from "vue-router";
+
 import OrderCard from "../atoms/OrderCard.vue";
+import OrderDrawer from "../organisms/OrderDrawer.vue";
+
+const globalStore = useGlobalStore();
+const route = useRoute();
+const router = useRouter();
 
 interface IItem {
   name: string;
@@ -30,6 +41,7 @@ interface IItem {
 
 interface IOrder {
   client: string;
+  uid: string;
   orderId: number;
   status: string;
   items: IItem[];
@@ -41,6 +53,45 @@ interface IProps {
 }
 
 defineProps<IProps>();
+
+const showOrderDrawer = ref(false);
+const selectedOrderId = ref<number>(0);
+const isLoading = ref(false);
+
+const navigateToOrder = async (orderUid: string, orderId: number) => {
+  try {
+    console.log(orderId, orderUid);
+
+    await globalStore.getOrderDetail(orderUid);
+
+    showOrderDrawer.value = true;
+
+    localStorage.setItem("currentOrderId", orderUid);
+    selectedOrderId.value = orderId;
+
+    router.push({ name: "OrderDetail", params: { id: Number(orderId) } });
+  } catch (error) {
+    console.error("Error al obtener el detalle de la orden:", error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const closeDrawer = () => {
+  showOrderDrawer.value = false;
+  router.push("/");
+};
+
+watch(
+  () => route.name,
+  (newName) => {
+    if (newName === "OrderDetail") {
+      showOrderDrawer.value = true;
+    } else {
+      showOrderDrawer.value = false;
+    }
+  }
+);
 </script>
 
 <style lang="postcss" scoped>
