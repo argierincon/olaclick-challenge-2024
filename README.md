@@ -53,7 +53,7 @@ Por ahora tenemos solo 3 estados de la orden:
 7. **Organización y Priorización de Ideas:**  
     Durante el desarrollo, pensé en muchas ideas que podía implementar en el proyecto.
 
-   Pero para poder administrar mejor los esfuerzos y el tiempo decidí crear un **proyecto en GitHub Projects** para gestionar las ideas y los problemas que debía resolver.
+   Pero para poder administrar mejor los esfuerzos y el tiempo decidí crear un **proyecto en GitHub Projects** para gestionar las ideas y las tareas que debía resolver.
 
    Creé tickets para registrar cada pensamiento que tenía o issues que debía resolver para así poder priorizar las tareas más importantes. Trabajar con listas de tareas o herramientas de planificación siempre me ayudan a mantener un flujo de trabajo claro y enfocado.
 
