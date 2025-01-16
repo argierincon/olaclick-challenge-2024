@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, withDefaults } from "vue";
+import { defineProps } from "vue";
 import Icon, { type TIconNames } from "./Icon.vue";
 
 interface Props {
