@@ -5,7 +5,7 @@
         <p class="name" :title="client">{{ truncate(client, 10) }}</p>
         <p class="order-id">ID de orden: {{ orderId }}</p>
       </div>
-      <Chip label="Enviado" type="success" size="small" />
+      <Chip label="Entregada" type="success" size="small" />
     </div>
 
     <div class="rounded-dashes-total"></div>
