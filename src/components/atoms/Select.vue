@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, ref, watch, withDefaults, toRefs } from "vue";
+import { computed, ref, watch, toRefs } from "vue";
 
 interface IOption {
   label: string;
