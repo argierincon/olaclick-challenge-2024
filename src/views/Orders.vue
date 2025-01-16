@@ -175,6 +175,7 @@ onMounted(() => {
 
 <style lang="postcss" scoped>
 .orders-container {
-  @apply p-3 bg-white rounded-xl flex flex-col h-full;
+  @apply p-3 h-[calc(100%_-_16px)] bg-white rounded-xl flex flex-col overflow-y-auto;
+  @apply md:h-full;
 }
 </style>
