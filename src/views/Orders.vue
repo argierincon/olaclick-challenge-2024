@@ -2,6 +2,7 @@
   <section class="container">
     <div class="table-container">
       <Table
+        :isLoading="isLoading"
         :tableData="cleanedData"
         :limitPerPage="limitPerPage"
         :currentPage="currentPage"
@@ -35,8 +36,6 @@ import Snackbar from "../components/atoms/Snackbar.vue";
 
 const globalStore = useGlobalStore();
 const data: any = computed(() => globalStore.ordersData || []);
-
-const isLoading = ref<boolean>(false);
 
 // TABLE PROPS
 const tableHeaders = [
@@ -90,6 +89,7 @@ const cleanData = (data: any[]) => {
   });
 };
 
+const isLoading = ref<boolean>(false);
 const cleanedData = computed(() => cleanData(data.value));
 
 const getOrdersData = () => {
@@ -121,14 +121,15 @@ const formatOrders = computed(() => {
 });
 
 // SNACKBAR
+const isLoadingSnack = ref<boolean>(true);
 const getLastFinishedOrders = () => {
   try {
-    isLoading.value = true;
+    isLoadingSnack.value = true;
     globalStore.getRecentFinishedOrders();
   } catch (error) {
     console.error(error);
   } finally {
-    isLoading.value = false;
+    isLoadingSnack.value = false;
   }
 };
 
