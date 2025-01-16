@@ -1,5 +1,5 @@
 <template>
-  <section class="container">
+  <section class="orders-container">
     <div class="table-container">
       <Table
         :isLoading="isLoading"
@@ -12,9 +12,7 @@
         @updateCurrentPage="onUpdatePage"
       />
     </div>
-    <div class="order-cards-section">
-      <OrderCardsSection :ordersList="formatOrders" />
-    </div>
+    <OrderCardsSection :ordersList="formatOrders" />
 
     <Snackbar
       v-model:isSnackVisible="showSnack"
@@ -176,15 +174,7 @@ onMounted(() => {
 </script>
 
 <style lang="postcss" scoped>
-.container {
+.orders-container {
   @apply p-3 bg-white rounded-xl flex flex-col h-full;
-}
-
-.table-container {
-  @apply flex-1 overflow-auto;
-}
-
-.order-cards-section {
-  @apply max-h-[350px] overflow-auto;
 }
 </style>

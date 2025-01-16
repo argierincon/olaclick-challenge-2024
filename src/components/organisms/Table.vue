@@ -287,12 +287,9 @@ const closeDrawer = () => {
 };
 
 watchEffect(() => {
-  console.log("*******TABLe WATCHER", route.name);
   if (route.name === "OrderDetail") {
-    console.log("IF watcher", route.name);
     showOrderDrawer.value = true;
   } else {
-    console.log("ELSE - watcher", route.name);
     showOrderDrawer.value = false;
   }
 });
@@ -316,7 +313,7 @@ watchEffect(() => {
   }
 
   & td {
-    @apply py-2 px-3 [&:not(:last-child)]:border-b border-b-gray-200;
+    @apply py-2 px-3 border-b border-b-gray-200;
     @apply lg:py-[22px] lg:px-4 lg:border-b;
   }
 
@@ -337,7 +334,7 @@ td:not([align]) {
 
 .table-wrapper {
   @apply overflow-x-auto;
-  max-height: calc(100vh - 100px);
+  max-height: calc(100vh - 483px);
 }
 
 .table-wrapper td.hidden-id {
@@ -353,7 +350,8 @@ td:not([align]) {
 }
 
 .responsive-table__pagination {
-  @apply py-6 flex flex-col gap-y-6 lg:flex-row items-center justify-between;
+  @apply py-6 flex flex-col items-center justify-between gap-y-6;
+  @apply lg:flex-row;
   @apply lg:sticky lg:bottom-0 lg:bg-white;
 }
 
