@@ -140,8 +140,6 @@ export const actions = {
 
       // Ejecutar la consulta con onSnapshot
       onSnapshot(qCurrentRange, (querySnapshot) => {
-        console.log("currentPage", currentPage);
-
         const allDocs = querySnapshot.docs;
 
         // Filtrar solo los documentos de la página actual
