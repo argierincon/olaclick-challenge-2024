@@ -1,3 +1,4 @@
+import type { QueryDocumentSnapshot } from "firebase/firestore";
 import type { IOrder } from "./interfaces/IOrders";
 
 export interface INewOrder {
@@ -10,23 +11,21 @@ export interface ILastOrderUpdated extends INewOrder {
 }
 
 export interface IState {
-  ordersData: IOrder[] | null;
+  ordersData: IOrder[] | [];
+  ordersDocs: QueryDocumentSnapshot[] | [];
   orderDetail: IOrder | null;
   lastFinishedOrders: IOrder[] | null;
   lastOrderUpdated: ILastOrderUpdated | null;
   newOrder: INewOrder | null;
-  tableTotal: number;
-  tableLimit: number;
-  tablePage: number;
+  totalOrders: number;
 }
 
 export const state = (): IState => ({
   ordersData: [],
+  ordersDocs: [],
   orderDetail: null,
   lastFinishedOrders: null,
   lastOrderUpdated: null,
   newOrder: null,
-  tableTotal: 0,
-  tableLimit: 10,
-  tablePage: 1,
+  totalOrders: 0,
 });
