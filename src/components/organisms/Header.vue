@@ -9,7 +9,7 @@
     </div>
 
     <div class="header__details">
-      <div class="flex gap-2">
+      <div class="hidden md:flex md:gap-2">
         <div class="detail detail--time">
           <p>{{ formattedDate }}</p>
           <span>
@@ -134,8 +134,9 @@ onUnmounted(() => {
 
 <style lang="postcss" scoped>
 .header {
-  @apply pt-4 px-4 flex flex-col gap-4;
+  @apply py-4 flex flex-col gap-4;
   @apply md:flex-row md:items-center md:justify-between;
+  @apply lg:px-0;
 }
 
 .header__content {

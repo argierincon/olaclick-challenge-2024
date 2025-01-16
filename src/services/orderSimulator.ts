@@ -21,7 +21,7 @@ const dishes = [
     name: "Ceviche",
     price: 6.0,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314051/orders%20manager/dishes/Frame_1_gdefbp.png",
     description:
       "Un plato fresco y cítrico con pescado crudo marinado en jugo de limón y especias.",
   },
@@ -29,7 +29,7 @@ const dishes = [
     name: "Lomo Saltado",
     price: 7.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314051/orders%20manager/dishes/Frame_2_knqorn.png",
     description:
       "Un delicioso salteado de carne de res, papas y cebollas, acompañado de arroz.",
   },
@@ -37,7 +37,7 @@ const dishes = [
     name: "Aji de Gallina",
     price: 6.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314051/orders%20manager/dishes/Frame_3_lzk7yz.png",
     description:
       "Un guiso cremoso y picante de pollo desmenuzado con una salsa de ají amarillo.",
   },
@@ -45,7 +45,7 @@ const dishes = [
     name: "Pachamanca",
     price: 8.0,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314052/orders%20manager/dishes/Frame_4_hc3fve.png",
     description:
       "Carne, papas y maíz cocinados al estilo tradicional andino, bajo tierra.",
   },
@@ -53,7 +53,7 @@ const dishes = [
     name: "Arroz con Pollo",
     price: 5.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314052/orders%20manager/dishes/Frame_5_n1muxd.png",
     description:
       "Un plato clásico con arroz, pollo y especias, preparado con hierbas frescas.",
   },
@@ -61,15 +61,15 @@ const dishes = [
     name: "Sancochado",
     price: 7.0,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314051/orders%20manager/dishes/Frame_6_xnsy3i.png",
     description:
       "Sopa espesa con carne, vegetales y tubérculos, tradicionalmente servida con arroz.",
   },
   {
-    name: "Chicharrón de Cerdo",
+    name: "Chicharrón de chancho",
     price: 6.0,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314051/orders%20manager/dishes/Frame_7_vzufsh.png",
     description:
       "Crujientes trozos de cerdo fritos, servidos con una salsa o ensalada fresca.",
   },
@@ -77,14 +77,14 @@ const dishes = [
     name: "Sopa a la Minuta",
     price: 4.0,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314051/orders%20manager/dishes/Frame_8_inhvqo.png",
     description: "Una sopa ligera con carne picada, vegetales y arroz.",
   },
   {
     name: "Frejoles con Seco",
     price: 6.0,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314052/orders%20manager/dishes/Frame_9_iyprs4.png",
     description:
       "Frijoles acompañados de carne de res guisada con especias, generalmente servido con arroz.",
   },
@@ -92,7 +92,7 @@ const dishes = [
     name: "Sudado de Pescado",
     price: 7.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314052/orders%20manager/dishes/Frame_10_sdbybw.png",
     description:
       "Plato de pescado cocido al vapor con cebollas, tomates y especias.",
   },
@@ -100,7 +100,7 @@ const dishes = [
     name: "Tallarín Saltado",
     price: 6.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314052/orders%20manager/dishes/Frame_11_mo2y6h.png",
     description:
       "Fideos salteados con carne, verduras y salsa de soya, al estilo chino-peruano.",
   },
@@ -111,62 +111,62 @@ const drinks = [
     name: "Vaso de Chicha Morada",
     price: 2.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314114/orders%20manager/drinks/Frame_17_wq2gqr.png",
   },
   {
     name: "Jarra de Chicha Morada",
     price: 7.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314116/orders%20manager/drinks/Frame_18_v8ffza.png",
   },
   {
     name: "Vaso de maracuyá",
     price: 2.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314114/orders%20manager/drinks/Frame_19_ink3nb.png",
   },
   {
     name: "Jarra de Maracuyá",
     price: 7.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314115/orders%20manager/drinks/Frame_20_sjtk3u.png",
   },
   {
     name: "Vaso de limonada",
     price: 2.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314114/orders%20manager/drinks/Frame_21_oug6mp.png",
   },
   {
     name: "Jarra de limonada",
     price: 7.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314117/orders%20manager/drinks/Frame_22_gtvlpv.png",
   },
   {
     name: "Vaso de naranjada",
     price: 2.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314115/orders%20manager/drinks/Frame_23_wlgnyf.png",
   },
   {
     name: "Jarra de naranjada",
     price: 7.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314115/orders%20manager/drinks/Frame_24_hjml0j.png",
   },
   {
     name: "Inca Kola personal",
     price: 1.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314117/orders%20manager/drinks/Frame_25_tamziq.png",
   },
   {
     name: "Inca Kola 1.5l",
 
     price: 4.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314116/orders%20manager/drinks/Frame_26_rzkshx.png",
   },
 ];
 
@@ -175,14 +175,14 @@ const desserts = [
     name: "Picarones",
     price: 3.0,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314088/orders%20manager/desserts/Frame_12_rdjzux.png",
     description: "Donas fritas hechas con zapallo, acompañadas de miel.",
   },
   {
     name: "Leche Asada",
     price: 2.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314088/orders%20manager/desserts/Frame_13_fqmpfv.png",
     description:
       "Postre cremoso de leche, huevo y vainilla, similar a un flan.",
   },
@@ -190,21 +190,21 @@ const desserts = [
     name: "Mazamorra Morada",
     price: 2.0,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314089/orders%20manager/desserts/Frame_14_tpur40.png",
     description: "Postre a base de maíz morado, azúcar y frutas.",
   },
   {
     name: "Arroz con Leche",
     price: 2.0,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314089/orders%20manager/desserts/Frame_15_x7ephl.png",
     description: "Arroz cremoso con leche, azúcar y canela.",
   },
   {
     name: "Suspiro a la Limeña",
     price: 2.5,
     image:
-      "https://epicwatersgp.com/content/uploads/2020/03/croissant-beef.png",
+      "https://res.cloudinary.com/dvvwfb2tr/image/upload/v1735314088/orders%20manager/desserts/Frame_16_qdwzn7.png",
     description: "Crema suave de manjar blanco con merengue.",
   },
 ];

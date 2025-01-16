@@ -15,19 +15,20 @@ export const getPaginationRange = (
   If the number of pages is less than the page numbers we want to show in our
   paginationComponent, we return the range [1..totalPageCount]
   */
-  if (totalPageNumbers >= totalPageCount) {
-    return range(1, totalPageCount);
+
+  if (totalPageCount <= totalPageNumbers + 2) {
+    const fullRange = range(1, totalPageCount);
+    return fullRange;
   }
 
   const leftSiblingIndex = Math.max(currentPage - 1, 1);
   const rightSiblingIndex = Math.min(currentPage + 1, totalPageCount);
 
   /*
-We do not want to show dots if there is only one position left 
-after/before the left/right page count as that would lead to a change if our Pagination
-component size which we do not want
-*/
-
+  We do not want to show dots if there is only one position left 
+  after/before the left/right page count as that would lead to a change if our Pagination
+  component size which we do not want
+  */
   const shouldShowLeftDots = leftSiblingIndex > 2;
   const shouldShowRightDots = rightSiblingIndex <= totalPageCount - 2;
 
@@ -35,23 +36,26 @@ component size which we do not want
   const lastPageIndex = totalPageCount;
 
   if (!shouldShowLeftDots && shouldShowRightDots) {
-    let leftItemCount = 3;
-    let leftRange = range(1, leftItemCount);
-
+    const leftItemCount = 3;
+    const leftRange = range(1, leftItemCount);
     return [...leftRange, DOTS, totalPageCount];
   }
 
   if (shouldShowLeftDots && !shouldShowRightDots) {
-    let rightItemCount = 3;
-    let rightRange = range(totalPageCount - rightItemCount + 1, totalPageCount);
-
+    const rightItemCount = 3;
+    const rightRange = range(
+      totalPageCount - rightItemCount + 1,
+      totalPageCount
+    );
     return [firstPageIndex, DOTS, ...rightRange];
   }
 
   if (shouldShowLeftDots && shouldShowRightDots) {
-    let middleRange = range(leftSiblingIndex, rightSiblingIndex);
+    const middleRange = range(leftSiblingIndex, rightSiblingIndex);
     return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
   }
 
-  return range(firstPageIndex, lastPageIndex);
+  const fullRange = range(firstPageIndex, lastPageIndex);
+
+  return fullRange;
 };

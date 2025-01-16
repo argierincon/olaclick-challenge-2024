@@ -1,6 +1,6 @@
 <template>
   <section class="order-card-section">
-    <h3 class="text-xl">Tracking de órdenes enviadas</h3>
+    <h3 class="text-xl">Tracking de órdenes entregadas</h3>
     <div class="card-list">
       <div v-if="ordersList.length === 0" class="card-default">
         <p class="text-sm">No hay órdenes entregadas</p>

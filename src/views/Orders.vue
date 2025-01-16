@@ -1,11 +1,18 @@
 <template>
-  <section class="container">
+  <section class="orders-container">
     <div class="table-container">
-      <Table :tableData="cleanedData" />
+      <Table
+        :isLoading="isLoading"
+        :tableData="cleanedData"
+        :limitPerPage="limitPerPage"
+        :currentPage="currentPage"
+        :tableTotal="globalStore.totalOrders"
+        :tableHeaders="tableHeaders"
+        @updateLimitPerPage="onUpdateLimit"
+        @updateCurrentPage="onUpdatePage"
+      />
     </div>
-    <div class="order-cards-section">
-      <OrderCardsSection :ordersList="formatOrders" />
-    </div>
+    <OrderCardsSection :ordersList="formatOrders" />
 
     <Snackbar
       v-model:isSnackVisible="showSnack"
@@ -20,7 +27,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import { useGlobalStore } from "../store";
-import { storeToRefs } from "pinia";
 
 import OrderCardsSection from "../components/molecules/OrderCardsSection.vue";
 import Table from "../components/organisms/Table.vue";
@@ -29,7 +35,28 @@ import Snackbar from "../components/atoms/Snackbar.vue";
 const globalStore = useGlobalStore();
 const data: any = computed(() => globalStore.ordersData || []);
 
-const isLoading = ref<boolean>(false);
+// TABLE PROPS
+const tableHeaders = [
+  "Nº",
+  "Hora",
+  "Detalle",
+  "Cliente",
+  "Total",
+  "Estado",
+  "Acciones",
+];
+
+const limitPerPage = ref<number>(10);
+const currentPage = ref<number>(1);
+
+const onUpdateLimit = (limit: number) => {
+  limitPerPage.value = limit;
+};
+
+const onUpdatePage = (page: number) => {
+  currentPage.value = page;
+};
+//-----------------
 
 const cleanData = (data: any[]) => {
   return data.map((order) => {
@@ -60,12 +87,13 @@ const cleanData = (data: any[]) => {
   });
 };
 
+const isLoading = ref<boolean>(false);
 const cleanedData = computed(() => cleanData(data.value));
 
 const getOrdersData = () => {
   try {
     isLoading.value = true;
-    globalStore.getOrders();
+    globalStore.getOrders(limitPerPage.value, currentPage.value);
   } catch (error) {
     console.error(error);
   } finally {
@@ -73,31 +101,7 @@ const getOrdersData = () => {
   }
 };
 
-const getLastFinishedOrders = () => {
-  try {
-    isLoading.value = true;
-    globalStore.getRecentFinishedOrders();
-  } catch (error) {
-    console.error(error);
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-const showSnack = ref(false);
-
-const onClose = () => {
-  showSnack.value = false;
-};
-
-const { tablePage, tableLimit } = storeToRefs(globalStore);
-watch(tableLimit, () => {
-  getOrdersData();
-});
-watch(tablePage, () => {
-  getOrdersData();
-});
-
+// ORDER CARDS SECTION
 const formatOrders = computed(() => {
   const orders = globalStore.lastFinishedOrders ?? [];
 
@@ -113,6 +117,25 @@ const formatOrders = computed(() => {
     })),
   }));
 });
+
+// SNACKBAR
+const isLoadingSnack = ref<boolean>(true);
+const getLastFinishedOrders = () => {
+  try {
+    isLoadingSnack.value = true;
+    globalStore.getRecentFinishedOrders();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isLoadingSnack.value = false;
+  }
+};
+
+const showSnack = ref(false);
+
+const onClose = () => {
+  showSnack.value = false;
+};
 
 const dataSnack = computed(() => {
   let snackData = { msg: "", type: "" };
@@ -136,6 +159,14 @@ const dataSnack = computed(() => {
   return snackData;
 });
 
+watch(limitPerPage, () => {
+  getOrdersData();
+});
+
+watch(currentPage, () => {
+  getOrdersData();
+});
+
 onMounted(() => {
   getOrdersData();
   getLastFinishedOrders();
@@ -143,15 +174,8 @@ onMounted(() => {
 </script>
 
 <style lang="postcss" scoped>
-.container {
-  @apply p-3 bg-white rounded-xl flex flex-col h-full;
-}
-
-.table-container {
-  @apply flex-1 overflow-auto;
-}
-
-.order-cards-section {
-  @apply max-h-[350px] overflow-auto;
+.orders-container {
+  @apply p-3 h-[calc(100%_-_16px)] bg-white rounded-xl flex flex-col overflow-y-auto;
+  @apply md:h-full;
 }
 </style>

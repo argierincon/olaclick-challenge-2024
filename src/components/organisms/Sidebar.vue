@@ -5,7 +5,11 @@
         <span>
           <Icon name="Magnify" />
         </span>
-        <input type="text" placeholder="Search..." class="focus:outline-none" />
+        <input
+          type="text"
+          placeholder="Search..."
+          class="w-full focus:outline-none"
+        />
       </div>
 
       <SidebarItem
@@ -139,7 +143,7 @@ watch(route, (newRoute) => {
 
 <style lang="postcss" scoped>
 .sidebar {
-  @apply h-full flex flex-col p-4 gap-4;
+  @apply h-full flex flex-col pl-4 gap-4;
 }
 
 .sidebar__item {

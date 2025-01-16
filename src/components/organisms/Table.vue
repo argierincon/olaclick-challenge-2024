@@ -66,24 +66,31 @@
         </tbody>
       </table>
     </div>
+
     <div class="responsive-table__pagination">
       <div class="pagination-buttons">
         <!-- :class="tableTotal === 0 ? 'opacity-0' : ''" -->
         <BtnTableActions
           icon="ChevronLeft"
-          :disabled="tablePage === 1"
-          :onClick="() => changePage(tablePage - 1)"
+          :disabled="currentPage === 1"
+          :onClick="() => onChangePage(currentPage - 1)"
         />
         <nav class="page-navigation">
           <ul class="button-numbers">
-            <li>
+            <Skeleton
+              v-if="arrRangeButtons.length === 0"
+              width="32px"
+              height="32px"
+              borderRadius="10px"
+            />
+            <li v-else>
               <button
-                v-for="btn in totalButtons"
+                v-for="btn in arrRangeButtons"
                 class="btn-page"
-                :class="{ 'btn-page--active': tablePage === btn }"
+                :class="{ 'btn-page--active': currentPage === btn }"
                 :key="btn"
                 :disabled="typeof btn === 'string'"
-                @click="changePage(btn)"
+                @click="onChangePage(btn)"
               >
                 {{ btn }}
               </button>
@@ -92,22 +99,51 @@
         </nav>
         <BtnTableActions
           icon="ChevronRight"
-          :disabled="tablePage === totalButtons.length"
-          :onClick="() => changePage(tablePage + 1)"
+          :disabled="currentPage === totalPageCount"
+          :onClick="() => onChangePage(currentPage + 1)"
         />
       </div>
       <div class="responsive-table__totals">
-        <p class="text-gray-600 text-sm">
-          Mostrando {{ tableTotals.from }} a {{ tableTotals.to }} de
-          {{ tableTotals.total }} registros
-        </p>
+        <div class="flex items-center gap-x-1 text-gray-600 text-sm">
+          Mostrando
+          <Skeleton
+            v-if="tableTotals.to == 0"
+            width="24px"
+            height="24px"
+            borderRadius="8px"
+          />
+          <span v-else>
+            {{ tableTotals.from }}
+          </span>
+          a
+          <Skeleton
+            v-if="tableTotals.to == 0"
+            width="24px"
+            height="24px"
+            borderRadius="8px"
+          />
+          <span>
+            {{ tableTotals.to }}
+          </span>
+          de
+          <Skeleton
+            v-if="tableTotals.total == 0"
+            width="24px"
+            height="24px"
+            borderRadius="8px"
+          />
+          <span>
+            {{ tableTotals.total }}
+          </span>
+          registros
+        </div>
         <Select
           iconChevronUp
           size="small"
           placeholder="Mostrar 10"
-          :selected="globalStore.tableLimit"
+          :selected="limitPerPage"
           :options="optPagination"
-          @change="selectLimit"
+          @change="onChangeLimit"
         />
       </div>
     </div>
@@ -117,21 +153,33 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, ref, toRefs, onMounted, watch } from "vue";
+import { defineProps, computed, ref, toRefs, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getPaginationRange } from "../../utils/paginationDots";
 import { useGlobalStore } from "../../store";
-import { storeToRefs } from "pinia";
 
 import BtnTableActions from "../atoms/BtnTableActions.vue";
 import Chip from "../atoms/Chip.vue";
 import Select from "../atoms/Select.vue";
 import OrderDrawer from "./OrderDrawer.vue";
+import Skeleton from "../atoms/Skeleton.vue";
+import type { IOrdersTable } from "../../store/interfaces/IOrders";
 
 const route = useRoute();
 const router = useRouter();
-
 const globalStore = useGlobalStore();
+
+interface IProps {
+  tableData: IOrdersTable[];
+  limitPerPage: number;
+  currentPage: number;
+  tableTotal: number;
+  tableHeaders: string[];
+}
+
+const props = defineProps<IProps>();
+
+const { tableData, limitPerPage, currentPage, tableTotal } = toRefs(props);
 
 interface ITotals {
   from: number;
@@ -139,35 +187,47 @@ interface ITotals {
   total: number;
 }
 
-type PaginationButton = number | string;
+const tableTotals = computed(() => {
+  const totals: ITotals = { from: 0, to: 0, total: 0 };
+  totals.from = limitPerPage.value * currentPage.value - limitPerPage.value + 1;
+  totals.to = Math.min(
+    limitPerPage.value * currentPage.value,
+    tableTotal.value
+  );
+  totals.total = tableTotal.value;
 
-const props = defineProps({
-  tableData: {
-    type: Array as () => {
-      uid: string;
-      id: number;
-      time: string;
-      detail: string;
-      client: string;
-      total: string;
-      status: string;
-    }[],
-    required: true,
-  },
+  return totals;
 });
 
-const { tableData } = toRefs(props);
+const totalPageCount = ref<number>(0);
 
-const nameMapping = {
-  uid: "uid",
-  id: "ID",
-  time: "Hora",
-  detail: "Detalle",
-  client: "Cliente",
-  total: "Total",
-  status: "Estado",
-} as const;
+const arrRangeButtons = computed(() => {
+  totalPageCount.value = Math.ceil(tableTotal.value / limitPerPage.value) || 0;
+  return getPaginationRange(totalPageCount.value, currentPage.value);
+});
 
+// EVENTS
+const emit = defineEmits(["updateLimitPerPage", "updateCurrentPage"]);
+
+const onChangePage = (page: number | string) => {
+  emit("updateCurrentPage", page);
+};
+
+const onChangeLimit = (limit: number) => {
+  emit("updateLimitPerPage", limit);
+  emit("updateCurrentPage", 1);
+};
+
+// CONSTS
+const optPagination = [
+  { label: "Mostrar 10", value: 10 },
+  { label: "Mostrar 20", value: 20 },
+  { label: "Mostrar 30", value: 30 },
+  { label: "Mostrar 40", value: 40 },
+  { label: "Mostrar 50", value: 50 },
+];
+
+// SPECIFIC IN THIS PROJECT
 const cleanData = computed(() => {
   const data = Array.isArray(tableData.value) ? tableData.value : [];
 
@@ -182,59 +242,25 @@ const cleanData = computed(() => {
   }));
 });
 
+const nameMapping = {
+  uid: "uid",
+  id: "ID",
+  time: "Hora",
+  detail: "Detalle",
+  client: "Cliente",
+  total: "Total",
+  status: "Estado",
+} as const;
+
 const getTranslatedLabel = (name: keyof typeof nameMapping): string => {
   return nameMapping[name] || name;
 };
 
-const tableHeaders = [
-  "Nº",
-  "Hora",
-  "Detalle",
-  "Cliente",
-  "Total",
-  "Estado",
-  "Acciones",
-];
-
-const optPagination = [
-  { label: "Mostrar 10", value: 10 },
-  { label: "Mostrar 20", value: 20 },
-  { label: "Mostrar 30", value: 30 },
-  { label: "Mostrar 40", value: 40 },
-  { label: "Mostrar 50", value: 50 },
-];
-
-const { tableLimit, tablePage, tableTotal } = storeToRefs(globalStore);
-const tableTotals = computed(() => {
-  const totals: ITotals = { from: 0, to: 0, total: 0 };
-  totals.from = tableLimit.value * tablePage.value - tableLimit.value + 1;
-  totals.to = Math.min(tableLimit.value * tablePage.value, tableTotal.value);
-  totals.total = tableTotal.value;
-
-  return totals;
-});
-
-const totalButtons = computed(() => {
-  const totalPageCount = Math.ceil(tableTotal.value / tableLimit.value) || 0;
-  return getPaginationRange(totalPageCount, globalStore.tablePage);
-});
-
-// Métodos
-const changePage = (page: PaginationButton): void => {
-  if (typeof page === "string") return;
-  globalStore.setPage(page);
-};
-
-const selectLimit = (limit: number): void => {
-  globalStore.setLimit(limit);
-};
-
-const selectedOrderId = ref<number | null>(null);
-
-const isLoading = ref(false);
-const loadingUid = ref<string | null>(null);
-
+// DRAWER
 const showOrderDrawer = ref(false);
+const isLoadingDrawer = ref(false);
+const selectedOrderId = ref<number | null>(null);
+const loadingUid = ref<string | null>(null);
 
 const navigateToOrder = async (orderUid: string, orderId: number) => {
   try {
@@ -250,7 +276,7 @@ const navigateToOrder = async (orderUid: string, orderId: number) => {
   } catch (error) {
     console.error("Error al obtener el detalle de la orden:", error);
   } finally {
-    isLoading.value = false;
+    isLoadingDrawer.value = false;
     loadingUid.value = null;
   }
 };
@@ -260,21 +286,12 @@ const closeDrawer = () => {
   router.push("/");
 };
 
-watch(
-  () => route.name,
-  (newName) => {
-    if (newName === "OrderDetail") {
-      showOrderDrawer.value = true;
-    } else {
-      showOrderDrawer.value = false;
-    }
+watchEffect(() => {
+  if (route.name === "OrderDetail") {
+    showOrderDrawer.value = true;
+  } else {
+    showOrderDrawer.value = false;
   }
-);
-
-onMounted(() => {
-  // if (route.params.id) {
-  //   selectedOrderId.value = Number(route.params.id);
-  // }
 });
 </script>
 
@@ -317,7 +334,8 @@ td:not([align]) {
 
 .table-wrapper {
   @apply overflow-x-auto;
-  max-height: calc(100vh - 100px);
+  @apply md:max-h-[calc(100vh_-_558px)];
+  @apply lg:max-h-[calc(100vh_-_486px)];
 }
 
 .table-wrapper td.hidden-id {
@@ -333,8 +351,8 @@ td:not([align]) {
 }
 
 .responsive-table__pagination {
-  @apply py-6 flex flex-col gap-y-6 lg:flex-row items-center justify-between;
-  @apply lg:sticky lg:bottom-0 lg:bg-white;
+  @apply py-4 flex flex-col items-center justify-between gap-y-6;
+  @apply lg:py-6 lg:flex-row lg:sticky lg:bottom-0 lg:bg-white;
 }
 
 .page-navigation {

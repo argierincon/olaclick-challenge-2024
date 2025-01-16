@@ -2,7 +2,7 @@
   <div class="layout">
     <Header class="layout__header" @toggle-sidebar="onOpenSidebar" />
     <Sidebar :isSidebarVisible="isSidebarVisible" class="layout__sidebar" />
-    <main class="content">
+    <main class="layout__main">
       <router-view v-slot="{ Component }">
         <transition name="slide" mode="out-in">
           <component :is="Component" />
@@ -26,24 +26,27 @@ const onOpenSidebar = (newVisibility: boolean) => {
 
 <style lang="postcss" scoped>
 .layout {
-  @apply p-4 h-screen;
-  @apply md:grid md:grid-rows-[80px,1fr] md:grid-cols-[300px_1fr];
+  @apply h-[100vh] px-4;
+  @apply md:grid;
+  @apply md:grid-rows-[96px_1fr] md:grid-cols-[230px_1fr] md:gap-x-4;
+  @apply lg:grid-cols-[280px_1fr];
+
+  grid-template-areas:
+    "nav nav"
+    "sidebar main";
 }
 
 .layout__header {
-  @apply md:row-start-1 md:col-span-2;
+  grid-area: nav;
 }
 
 .layout__sidebar {
-  @apply md:col-span-1 md:row-span-2;
+  grid-area: sidebar;
 }
 
-.content {
-  @apply py-4;
-  grid-column: 2;
-  grid-row: 2;
-  overflow-y: auto;
-  scrollbar-width: none;
+.layout__main {
+  @apply h-[calc(100%_-_16px)];
+  grid-area: main;
 
   &::-webkit-scrollbar {
     display: none; /* Safari y Chrome */
