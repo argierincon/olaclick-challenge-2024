@@ -110,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import type { TStatus } from "../../interfaces/Orders";
 import { useGlobalStore } from "../../store";
 
