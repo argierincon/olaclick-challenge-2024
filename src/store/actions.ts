@@ -4,7 +4,6 @@ import {
   query,
   orderBy,
   limit,
-  startAfter,
   doc,
   getDoc,
   onSnapshot,
@@ -113,35 +112,55 @@ export const actions = {
       throw new Error("Failed to add order to Firestore");
     }
   },
-  async getOrders(this: IState) {
+  async getOrders(this: IState, limitPerPage: number, currentPage: number) {
     try {
       const ordersCollection = collection(db, "orders");
 
-      const q = query(
+      // Obtener el total de órdenes
+      const qTotalOrders = query(
+        ordersCollection,
+        where("status", "in", ["started", "delivered"]),
+        orderBy("status"),
+        orderBy("id")
+      );
+
+      getCountFromServer(qTotalOrders).then((snapshot) => {
+        this.totalOrders = snapshot.data().count;
+      });
+
+      // Construir la consulta para la página actual basada en índices
+      const offset = (currentPage - 1) * limitPerPage; // Calcular el desplazamiento
+      const qCurrentRange = query(
         ordersCollection,
         where("status", "in", ["started", "delivered"]),
         orderBy("status"),
         orderBy("id"),
-        limit(this.tableLimit),
-        startAfter(
-          this.tablePage > 1 ? (this.tablePage - 1) * this.tableLimit : 0
-        )
+        limit(limitPerPage + offset)
       );
 
-      // onSnapshot para escuchar los cambios en tiempo real
-      onSnapshot(q, (querySnapshot) => {
-        const orders: IOrder[] = querySnapshot.docs.map((doc) => ({
+      // Ejecutar la consulta con onSnapshot
+      onSnapshot(qCurrentRange, (querySnapshot) => {
+        console.log("currentPage", currentPage);
+
+        const allDocs = querySnapshot.docs;
+
+        // Filtrar solo los documentos de la página actual
+        const pageDocs = allDocs.slice(offset, offset + limitPerPage);
+
+        // Almacenar el último documento de esta página
+        if (!this.ordersDocs) this.ordersDocs = [];
+        this.ordersDocs[currentPage - 1] = pageDocs[pageDocs.length - 1];
+
+        // Procesar y guardar las órdenes
+        const orders: IOrder[] = pageDocs.map((doc) => ({
           ...(doc.data() as IOrder),
           uid: doc.id,
         }));
 
         this.ordersData = orders;
-
-        getCountFromServer(q).then((snapshot) => {
-          this.tableTotal = snapshot.data().count;
-        });
       });
     } catch (error) {
+      console.error("Error al obtener órdenes:", error);
       throw new Error("Failed to fetch orders");
     }
   },
@@ -315,12 +334,5 @@ export const actions = {
     } else {
       console.log("No hay un proceso de actualización en ejecución.");
     }
-  },
-  setLimit(this: IState, limit: number) {
-    this.tableLimit = limit;
-    this.tablePage = 1;
-  },
-  setPage(this: IState, page: number) {
-    this.tablePage = page;
   },
 };
