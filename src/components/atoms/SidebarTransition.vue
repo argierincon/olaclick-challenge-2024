@@ -64,9 +64,10 @@ watch(
 }
 
 .sidebar {
-  @apply h-[calc(100%_-_80px)] w-full top-24 bg-white;
+  @apply h-[calc(100%_-_80px)] w-full top-20 bg-white;
   @apply flex flex-col gap-y-6 fixed left-0 bottom-0 z-10;
-  @apply md:w-[320px] md:h-[calc(100%_-_114px)] md:top-24 md:bg-transparent;
+  @apply md:w-[280px] md:h-[calc(100%_-_112px)] md:top-24 md:bg-transparent;
+  @apply lg:w-[320px];
   transition: transform 0.3s ease-in-out;
   pointer-events: auto;
 }
