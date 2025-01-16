@@ -1,7 +1,15 @@
 <template>
   <section class="container">
     <div class="table-container">
-      <Table :tableData="cleanedData" />
+      <Table
+        :tableData="cleanedData"
+        :limitPerPage="limitPerPage"
+        :currentPage="currentPage"
+        :tableTotal="globalStore.totalOrders"
+        :tableHeaders="tableHeaders"
+        @updateLimitPerPage="onUpdateLimit"
+        @updateCurrentPage="onUpdatePage"
+      />
     </div>
     <div class="order-cards-section">
       <OrderCardsSection :ordersList="formatOrders" />
@@ -20,7 +28,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import { useGlobalStore } from "../store";
-import { storeToRefs } from "pinia";
 
 import OrderCardsSection from "../components/molecules/OrderCardsSection.vue";
 import Table from "../components/organisms/Table.vue";
@@ -30,6 +37,29 @@ const globalStore = useGlobalStore();
 const data: any = computed(() => globalStore.ordersData || []);
 
 const isLoading = ref<boolean>(false);
+
+// TABLE PROPS
+const tableHeaders = [
+  "Nº",
+  "Hora",
+  "Detalle",
+  "Cliente",
+  "Total",
+  "Estado",
+  "Acciones",
+];
+
+const limitPerPage = ref<number>(10);
+const currentPage = ref<number>(1);
+
+const onUpdateLimit = (limit: number) => {
+  limitPerPage.value = limit;
+};
+
+const onUpdatePage = (page: number) => {
+  currentPage.value = page;
+};
+//-----------------
 
 const cleanData = (data: any[]) => {
   return data.map((order) => {
@@ -65,7 +95,7 @@ const cleanedData = computed(() => cleanData(data.value));
 const getOrdersData = () => {
   try {
     isLoading.value = true;
-    globalStore.getOrders();
+    globalStore.getOrders(limitPerPage.value, currentPage.value);
   } catch (error) {
     console.error(error);
   } finally {
@@ -73,6 +103,24 @@ const getOrdersData = () => {
   }
 };
 
+// ORDER CARDS SECTION
+const formatOrders = computed(() => {
+  const orders = globalStore.lastFinishedOrders ?? [];
+
+  return orders.map((order) => ({
+    client: order.client,
+    uid: order.uid,
+    orderId: order.id,
+    status: order.status,
+    total: order.total,
+    items: order.items.map((item) => ({
+      name: item.name,
+      quantity: item.quantity,
+    })),
+  }));
+});
+
+// SNACKBAR
 const getLastFinishedOrders = () => {
   try {
     isLoading.value = true;
@@ -89,30 +137,6 @@ const showSnack = ref(false);
 const onClose = () => {
   showSnack.value = false;
 };
-
-const { tablePage, tableLimit } = storeToRefs(globalStore);
-watch(tableLimit, () => {
-  getOrdersData();
-});
-watch(tablePage, () => {
-  getOrdersData();
-});
-
-const formatOrders = computed(() => {
-  const orders = globalStore.lastFinishedOrders ?? [];
-
-  return orders.map((order) => ({
-    client: order.client,
-    uid: order.uid,
-    orderId: order.id,
-    status: order.status,
-    total: order.total,
-    items: order.items.map((item) => ({
-      name: item.name,
-      quantity: item.quantity,
-    })),
-  }));
-});
 
 const dataSnack = computed(() => {
   let snackData = { msg: "", type: "" };
@@ -134,6 +158,14 @@ const dataSnack = computed(() => {
   }
 
   return snackData;
+});
+
+watch(limitPerPage, () => {
+  getOrdersData();
+});
+
+watch(currentPage, () => {
+  getOrdersData();
 });
 
 onMounted(() => {
