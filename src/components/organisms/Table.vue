@@ -77,7 +77,13 @@
         />
         <nav class="page-navigation">
           <ul class="button-numbers">
-            <li>
+            <Skeleton
+              v-if="arrRangeButtons.length === 0"
+              width="32px"
+              height="32px"
+              borderRadius="10px"
+            />
+            <li v-else>
               <button
                 v-for="btn in arrRangeButtons"
                 class="btn-page"
@@ -98,10 +104,39 @@
         />
       </div>
       <div class="responsive-table__totals">
-        <p class="text-gray-600 text-sm">
-          Mostrando {{ tableTotals.from }} a {{ tableTotals.to }} de
-          {{ tableTotals.total }} registros
-        </p>
+        <div class="flex items-center gap-x-1 text-gray-600 text-sm">
+          Mostrando
+          <Skeleton
+            v-if="tableTotals.to == 0"
+            width="24px"
+            height="24px"
+            borderRadius="8px"
+          />
+          <span v-else>
+            {{ tableTotals.from }}
+          </span>
+          a
+          <Skeleton
+            v-if="tableTotals.to == 0"
+            width="24px"
+            height="24px"
+            borderRadius="8px"
+          />
+          <span>
+            {{ tableTotals.to }}
+          </span>
+          de
+          <Skeleton
+            v-if="tableTotals.total == 0"
+            width="24px"
+            height="24px"
+            borderRadius="8px"
+          />
+          <span>
+            {{ tableTotals.total }}
+          </span>
+          registros
+        </div>
         <Select
           iconChevronUp
           size="small"
@@ -118,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, ref, toRefs, watch, reactive } from "vue";
+import { defineProps, computed, ref, toRefs, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getPaginationRange } from "../../utils/paginationDots";
 import { useGlobalStore } from "../../store";
@@ -127,6 +162,7 @@ import BtnTableActions from "../atoms/BtnTableActions.vue";
 import Chip from "../atoms/Chip.vue";
 import Select from "../atoms/Select.vue";
 import OrderDrawer from "./OrderDrawer.vue";
+import Skeleton from "../atoms/Skeleton.vue";
 
 const route = useRoute();
 const router = useRouter();
