@@ -21,8 +21,6 @@ export interface IOrder {
   taxRate:  number;
 }
 
-export interface IOrdersData { 
-  data:   IOrder[],
-  total:  number,
+export interface IOrdersTable extends IOrder {
+  detail:   string
 }
-

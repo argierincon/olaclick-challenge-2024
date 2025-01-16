@@ -163,23 +163,14 @@ import Chip from "../atoms/Chip.vue";
 import Select from "../atoms/Select.vue";
 import OrderDrawer from "./OrderDrawer.vue";
 import Skeleton from "../atoms/Skeleton.vue";
+import type { IOrdersTable } from "../../store/interfaces/IOrders";
 
 const route = useRoute();
 const router = useRouter();
 const globalStore = useGlobalStore();
 
-interface IOrderProvisional {
-  uid: string;
-  id: number;
-  time: string;
-  detail: string;
-  client: string;
-  status: string;
-  total: string;
-}
-
 interface IProps {
-  tableData: IOrderProvisional[];
+  tableData: IOrdersTable[];
   limitPerPage: number;
   currentPage: number;
   tableTotal: number;
