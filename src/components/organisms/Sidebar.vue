@@ -5,7 +5,11 @@
         <span>
           <Icon name="Magnify" />
         </span>
-        <input type="text" placeholder="Search..." class="focus:outline-none" />
+        <input
+          type="text"
+          placeholder="Search..."
+          class="w-full focus:outline-none"
+        />
       </div>
 
       <SidebarItem
