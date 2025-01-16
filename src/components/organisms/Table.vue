@@ -153,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, ref, toRefs, watchEffect } from "vue";
+import { computed, ref, toRefs, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getPaginationRange } from "../../utils/paginationDots";
 import { useGlobalStore } from "../../store";

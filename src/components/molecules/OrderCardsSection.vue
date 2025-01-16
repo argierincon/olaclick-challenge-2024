@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useGlobalStore } from "../../store";
 import { useRoute, useRouter } from "vue-router";
 

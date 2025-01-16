@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, toRefs } from "vue";
+import { computed, toRefs } from "vue";
 import Chip from "./Chip.vue";
 
 interface IItem {

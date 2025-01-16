@@ -3,7 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
 import ArrowLeft from "../icons/ArrowLeft.vue";
 import Calendar from "../icons/Calendar.vue";
 import ChevronLeft from "../icons/ChevronLeft.vue";
