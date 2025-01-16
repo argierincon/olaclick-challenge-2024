@@ -153,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, ref, toRefs, watch } from "vue";
+import { defineProps, computed, ref, toRefs, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getPaginationRange } from "../../utils/paginationDots";
 import { useGlobalStore } from "../../store";
@@ -286,16 +286,16 @@ const closeDrawer = () => {
   router.push("/");
 };
 
-watch(
-  () => route.name,
-  (newName) => {
-    if (newName === "OrderDetail") {
-      showOrderDrawer.value = true;
-    } else {
-      showOrderDrawer.value = false;
-    }
+watchEffect(() => {
+  console.log("*******TABLe WATCHER", route.name);
+  if (route.name === "OrderDetail") {
+    console.log("IF watcher", route.name);
+    showOrderDrawer.value = true;
+  } else {
+    console.log("ELSE - watcher", route.name);
+    showOrderDrawer.value = false;
   }
-);
+});
 </script>
 
 <style lang="postcss" scoped>
