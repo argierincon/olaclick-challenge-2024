@@ -267,7 +267,7 @@ const getTranslatedLabel = (name: keyof typeof nameMapping): string => {
 
 // DRAWER
 const showOrderDrawer = ref(false);
-const isLoading = ref(false);
+const isLoadingDrawer = ref(false);
 const selectedOrderId = ref<number | null>(null);
 const loadingUid = ref<string | null>(null);
 
@@ -285,7 +285,7 @@ const navigateToOrder = async (orderUid: string, orderId: number) => {
   } catch (error) {
     console.error("Error al obtener el detalle de la orden:", error);
   } finally {
-    isLoading.value = false;
+    isLoadingDrawer.value = false;
     loadingUid.value = null;
   }
 };
