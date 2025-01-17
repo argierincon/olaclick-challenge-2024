@@ -21,6 +21,14 @@ export const getPaginationRange = (
     return fullRange;
   }
 
+  /* 
+  If the total number of pages is equal to or less than the maximum allowed,
+  display all pages directly
+  */
+  if (totalPageCount <= totalPageNumbers + 3) {
+    return range(1, totalPageCount);
+  }
+
   const leftSiblingIndex = Math.max(currentPage - 1, 1);
   const rightSiblingIndex = Math.min(currentPage + 1, totalPageCount);
 
